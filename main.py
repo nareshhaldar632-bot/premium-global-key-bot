@@ -7,7 +7,8 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from products import PRODUCTS
+from products import PRODUCTS, DURATIONS
+from config import ADMIN_ID, QR_IMAGE
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -21,7 +22,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "👋 Welcome to Premium Global Store\n\nChoose an option:",
-        reply_markup=InlineKeyboardMarkup(keyboard),
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
 
@@ -33,55 +34,63 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = []
 
         for product in PRODUCTS:
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        product["name"],
-                        callback_data=f"product_{product['id']}"
-                    )
-                ]
-            )
+            keyboard.append([
+                InlineKeyboardButton(
+                    product["name"],
+                    callback_data=f"product_{product['id']}"
+                )
+            ])
 
-        keyboard.append(
-            [InlineKeyboardButton("⬅️ Back", callback_data="back")]
-        )
+        keyboard.append([
+            InlineKeyboardButton("⬅️ Back", callback_data="back")
+        ])
 
         await query.edit_message_text(
-            "📦 Select a Product",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "📦 Select Product",
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
+
 
     elif query.data.startswith("product_"):
 
-        keyboard = [
-            [InlineKeyboardButton("1 Day - ₹60", callback_data="coming_soon")],
-            [InlineKeyboardButton("3 Days - ₹100", callback_data="coming_soon")],
-            [InlineKeyboardButton("7 Days - ₹150", callback_data="coming_soon")],
-            [InlineKeyboardButton("10 Days - ₹190", callback_data="coming_soon")],
-            [InlineKeyboardButton("15 Days - ₹300", callback_data="coming_soon")],
-            [InlineKeyboardButton("30 Days - ₹500", callback_data="coming_soon")],
-            [InlineKeyboardButton("⬅️ Back", callback_data="products")],
-        ]
+        keyboard = []
+
+        for day, price in DURATIONS.items():
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{day} - ₹{price}",
+                    callback_data=f"buy_{day}"
+                )
+            ])
+
+        keyboard.append([
+            InlineKeyboardButton("⬅️ Back", callback_data="products")
+        ])
 
         await query.edit_message_text(
             "⏳ Select Duration",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
+
+    elif query.data.startswith("buy_"):
+
+        await query.message.reply_photo(
+            photo=QR_IMAGE,
+            caption="💳 Payment करें और Screenshot भेजें\n\nPayment के बाद Admin को भेज दिया जाएगा."
+        )
+
+
     elif query.data == "back":
+
         keyboard = [
-            [InlineKeyboardButton("📦 Products", callback_data="products")],
-            [InlineKeyboardButton("📞 Contact Admin", url="https://t.me/Premium_Mods_Reseller")],
-            [InlineKeyboardButton("📢 Join Channel", url="https://t.me/primesupport_boi")],
+            [InlineKeyboardButton("📦 Products", callback_data="products")]
         ]
 
         await query.edit_message_text(
-            "👋 Welcome to Premium Global Store\n\nChoose an option:",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            "👋 Welcome Back",
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-    else:
-        await query.answer("Coming Soon!", show_alert=True)
 
 
 app = Application.builder().token(BOT_TOKEN).build()
