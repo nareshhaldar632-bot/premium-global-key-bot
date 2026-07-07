@@ -9,3 +9,5 @@ PRICES = {
     "15 Days": 300,
     "30 Days": 500,
 }
+ADMIN_ID = 8469175911
+QR_IMAGE = "qr.jpg"
