@@ -33,14 +33,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = []
 
         for product in PRODUCTS:
-    keyboard.append(
-        [
-            InlineKeyboardButton(
-                product["name"],
-                callback_data=f"product_{product['id']}"
+            keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        product["name"],
+                        callback_data=f"product_{product['id']}"
+                    )
+                ]
             )
-        ]
-    )
 
         keyboard.append(
             [InlineKeyboardButton("⬅️ Back", callback_data="back")]
@@ -50,23 +50,24 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📦 Select a Product",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
-elif query.data.startswith("product_"):
-    product_id = query.data.replace("product_", "")
 
-    keyboard = [
-        [InlineKeyboardButton("1 Day - ₹60", callback_data="coming_soon")],
-        [InlineKeyboardButton("3 Days - ₹100", callback_data="coming_soon")],
-        [InlineKeyboardButton("7 Days - ₹150", callback_data="coming_soon")],
-        [InlineKeyboardButton("10 Days - ₹190", callback_data="coming_soon")],
-        [InlineKeyboardButton("15 Days - ₹300", callback_data="coming_soon")],
-        [InlineKeyboardButton("30 Days - ₹500", callback_data="coming_soon")],
-        [InlineKeyboardButton("⬅️ Back", callback_data="products")],
-    ]
+    elif query.data.startswith("product_"):
 
-    await query.edit_message_text(
-        "⏳ Select Duration",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-    )
+        keyboard = [
+            [InlineKeyboardButton("1 Day - ₹60", callback_data="coming_soon")],
+            [InlineKeyboardButton("3 Days - ₹100", callback_data="coming_soon")],
+            [InlineKeyboardButton("7 Days - ₹150", callback_data="coming_soon")],
+            [InlineKeyboardButton("10 Days - ₹190", callback_data="coming_soon")],
+            [InlineKeyboardButton("15 Days - ₹300", callback_data="coming_soon")],
+            [InlineKeyboardButton("30 Days - ₹500", callback_data="coming_soon")],
+            [InlineKeyboardButton("⬅️ Back", callback_data="products")],
+        ]
+
+        await query.edit_message_text(
+            "⏳ Select Duration",
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
+
     elif query.data == "back":
         keyboard = [
             [InlineKeyboardButton("📦 Products", callback_data="products")],
