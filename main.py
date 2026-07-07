@@ -33,9 +33,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = []
 
         for product in PRODUCTS:
-            keyboard.append(
-                [InlineKeyboardButton(product, callback_data="coming_soon")]
+    keyboard.append(
+        [
+            InlineKeyboardButton(
+                product["name"],
+                callback_data=f"product_{product['id']}"
             )
+        ]
+    )
 
         keyboard.append(
             [InlineKeyboardButton("⬅️ Back", callback_data="back")]
