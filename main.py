@@ -1,9 +1,12 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+
 from telegram.ext import (
     Application,
     CommandHandler,
     CallbackQueryHandler,
+    MessageHandler,
+    filters,
     ContextTypes,
 )
 
@@ -75,10 +78,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif query.data.startswith("buy_"):
 
-        await query.message.reply_photo(
-            photo=QR_IMAGE,
-            caption="💳 Payment करें और Screenshot भेजें\n\nPayment के बाद Admin को भेज दिया जाएगा."
-        )
+    await query.message.reply_photo(
+    photo=QR_IMAGE,
+    caption="💳 Payment करें\n\nPayment के बाद अपना UTR Number भेजें।\n\nExample: 123456789012"
+    )
+  
 
 
     elif query.data == "back":
@@ -92,11 +96,16 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
+async def utr(update, context):
+    utr_number = update.message.text
 
+    await update.message.reply_text(
+        "✅ UTR Received\nAdmin payment verify karega."
+    )
 app = Application.builder().token(BOT_TOKEN).build()
 
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
-
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, utr))
 print("Bot Started...")
 app.run_polling()
