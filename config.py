@@ -1,4 +1,4 @@
-ADMIN_USERNAME = "@Premium_Mods_Reseller"
+ADMIN_ID = 8469175911
 CHANNEL_URL = "https://t.me/primesupport_boi"
 
 PRICES = {
