@@ -157,14 +157,6 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"✅ Admin Panel\n\n👤 Total Users: {total}"
     )
-    def main():
-        create_tables()
-
-    app = Application.builder().token(BOT_TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("admin", admin))
-    app.add_handler(CallbackQueryHandler(button))
 
     def main():
     create_tables()
