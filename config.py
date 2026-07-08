@@ -1,10 +1,8 @@
 ADMIN_ID = 8469175911
 
-CHANNEL_URL = "https://t.me/primesupport_boi"
+CHANNEL_URL = "https://t.me/your_channel_name"
 
-from config import 
 QR_IMAGE = "qr.jpg"
-UPI_ID = "yourupi@bank"
 
 PRICES = {
     "1 Day": 60,
