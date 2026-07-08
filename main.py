@@ -100,10 +100,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
-    # Buy
-    elif data.startswith("buy_"):
+# Buy
+elif data.startswith("buy_"):
     parts = data.split("_")
-
     product = parts[1]
     duration = "_".join(parts[2:])
 
@@ -121,6 +120,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Payment ke baad UTR number bheje."
         )
     )
+    
+    
 
 
 def main():
