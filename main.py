@@ -1,0 +1,64 @@
+import os
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackQueryHandler,
+    ContextTypes,
+)
+
+from database import create_tables, add_user
+from products import PRODUCTS
+from config import CHANNEL_URL
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+
+    add_user(
+        user.id,
+        user.username,
+        user.first_name,
+    )
+
+    keyboard = [
+        [InlineKeyboardButton("📦 Products", callback_data="products")],
+        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)],
+    ]
+
+    await update.message.reply_text(
+        "👋 Welcome to Nandu Global Key Store\n\nChoose an option:",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+    )
+
+
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "products":
+        text = "📦 Available Products\n\n"
+
+        for product in PRODUCTS:
+            text += f"• {product['name']}\n"
+
+        await query.edit_message_text(text)
+
+
+def main():
+    create_tables()
+
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button))
+
+    print("Bot Started...")
+
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()
