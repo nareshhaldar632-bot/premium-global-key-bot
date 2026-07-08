@@ -170,9 +170,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 duration = parts[-2] + " " + parts[-1]
 
 price = DURATIONS.get(duration, 0)
-
-        await query.message.reply_photo(
-            photo=open(QR_IMAGE, "rb"),
+await query.message.reply_photo(
+    photo=open(QR_IMAGE, "rb"),
             caption=(
                 "💳 Payment Details\n\n"
                 f"📦 Product: {product}\n"
