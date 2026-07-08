@@ -1,4 +1,5 @@
 import os
+from database import create_tables
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -102,6 +103,7 @@ async def utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
+    from database import create_tables
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
