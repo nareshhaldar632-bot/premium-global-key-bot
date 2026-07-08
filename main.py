@@ -157,7 +157,6 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✅ Admin Panel\n\n"
         "Users feature coming soon."
     )
-    from telegram.ext import MessageHandler, filters
 
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
