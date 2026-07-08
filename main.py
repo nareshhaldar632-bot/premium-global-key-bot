@@ -1,5 +1,9 @@
 import os
-from database import add_order
+from database import (
+    add_order,
+    update_order_status,
+    get_order
+)
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import time
 from database import create_tables, add_user
