@@ -38,15 +38,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if query.data == "products":
-        text = "📦 Available Products\n\n"
+if query.data == "products":
+    keyboard = []
 
-        for product in PRODUCTS:
-            text += f"• {product['name']}\n"
+    for product in PRODUCTS:
+        keyboard.append([
+            InlineKeyboardButton(
+                product["name"],
+                callback_data=f"product_{product['id']}"
+            )
+        ])
 
-        await query.edit_message_text(text)
-
-
+    await query.edit_message_text(
+        "📦 Select Product",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 def main():
     create_tables()
 
