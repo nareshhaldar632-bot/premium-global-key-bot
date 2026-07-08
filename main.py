@@ -80,8 +80,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
             reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-            elif data.startswith("product_"):
+                )
+
+        elif data.startswith("product_"):
 
         product_id = data.replace("product_", "")
 
@@ -108,11 +109,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         )
 
-        await query.edit_message_text(
+                await query.edit_message_text(
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-elif data.startswith("buy|"):
+
+    elif data.startswith("buy|"):
 
         _, product_id, duration = data.split("|")
         duration = duration.replace("_", " ")
@@ -141,12 +143,12 @@ elif data.startswith("buy|"):
 
 
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     if update.effective_user.id != ADMIN_ID:
         await update.message.reply_text("❌ Access Denied")
         return
 
-    def main():
+
+def main():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
