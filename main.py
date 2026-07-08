@@ -166,9 +166,10 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parts = data.split("_")
 
         product = parts[1]
-        duration = "_".join(parts[2:])
 
-        price = DURATIONS.get(duration, 0)
+duration = parts[-2] + " " + parts[-1]
+
+price = DURATIONS.get(duration, 0)
 
         await query.message.reply_photo(
             photo=open(QR_IMAGE, "rb"),
