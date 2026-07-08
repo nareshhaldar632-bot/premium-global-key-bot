@@ -149,13 +149,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
+async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
 
+    await update.message.reply_text(
+        "✅ Admin Panel\n\n"
+        "Users feature coming soon."
+    )
 def main():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("admin", admin))
     app.add_handler(CallbackQueryHandler(button))
 
     print("Bot Started...")
