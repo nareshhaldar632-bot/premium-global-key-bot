@@ -143,7 +143,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     "📷 QR Scan karke payment kare.\n"
     "✅ Payment ke baad UTR number bheje."
             )
-            )
         )
 
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
