@@ -33,26 +33,26 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
-
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-if query.data == "products":
-    keyboard = []
+    if query.data == "products":
+        keyboard = []
 
-    for product in PRODUCTS:
-        keyboard.append([
-            InlineKeyboardButton(
-                product["name"],
-                callback_data=f"product_{product['id']}"
-            )
-        ])
+        for product in PRODUCTS:
+            keyboard.append([
+                InlineKeyboardButton(
+                    product["name"],
+                    callback_data=f"product_{product['id']}"
+                )
+            ])
 
-    await query.edit_message_text(
-        "📦 Select Product",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+        await query.edit_message_text(
+            "📦 Select Product",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
 def main():
     create_tables()
 
