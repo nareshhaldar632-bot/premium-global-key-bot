@@ -81,19 +81,20 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-    elif data.startswith("product_"):
+            elif data.startswith("product_"):
 
         product_id = data.replace("product_", "")
 
         keyboard = []
 
         for duration, price in DURATIONS.items():
+            callback = duration.replace(" ", "_")
+
             keyboard.append(
                 [
                     InlineKeyboardButton(
                         f"{duration} - ₹{price}",
-                        callback_data=f"buy_{product_id}_{duration}"
+                        callback_data=f"buy|{product_id}|{callback}"
                     )
                 ]
             )
@@ -111,29 +112,19 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-    elif data.startswith("buy_"):
 
-        value = data.replace("buy_", "", 1)
+    elif data.startswith("buy|"):
 
-        duration = None
-        product_id = None
+        _, product_id, duration = data.split("|")
+        duration = duration.replace("_", " ")
 
-        for d in DURATIONS.keys():
-            if value.endswith(d):
-                duration = d
-                product_id = value[:-len(d)-1]
-                break
-
-        if duration is None:
-            await query.answer("❌ Invalid duration", show_alert=True)
-            return
-
-        price = DURATIONS[duration]
+        price = DURATIONS.get(duration, 0)
 
         product_name = product_id
-        for p in PRODUCTS:
-            if p["id"] == product_id:
-                product_name = p["name"]
+
+        for product in PRODUCTS:
+            if product["id"] == product_id:
+                product_name = product["name"]
                 break
 
         await query.message.reply_photo(
@@ -149,27 +140,31 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
+
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     if update.effective_user.id != ADMIN_ID:
+        await update.message.reply_text("❌ Access Denied")
         return
 
-    total = len(create_tables())
     await update.message.reply_text(
-        f"✅ Admin Panel\n\n👤 Total Users: {total}"
-    )
+        "🔐 Admin Panel\n\n"
+        "✅ Bot Running Successfully
+        def main():
 
-    def main():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
+    # Commands
     app.add_handler(CommandHandler("start", start))
-    
     app.add_handler(CommandHandler("admin", admin))
-    
+
+    # Buttons
     app.add_handler(CallbackQueryHandler(button))
 
-    print("Bot Started...")
+    print("✅ Nandu Global Key Bot Started Successfully...")
+
     app.run_polling()
 
 
