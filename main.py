@@ -13,6 +13,7 @@ from database import create_tables, add_user
 from products import PRODUCTS, DURATIONS
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_ID = 8469175911
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
