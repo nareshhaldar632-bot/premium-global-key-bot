@@ -127,42 +127,52 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     # Product Selected
 
+            keyboard.append(
+            [
+                InlineKeyboardButton(
+                    "⬅ Back",
+                    callback_data="products"
+                )
+            ]
+        )
+
+        await query.edit_message_text(
+            "⏳ Select Duration",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
     elif data.startswith("buy_"):
 
-    value = data.replace("buy_", "", 1)
+        value = data.replace("buy_", "")
+        product_id, duration = value.rsplit("_", 1)
 
-    duration = None
-    product = None
+        price = DURATIONS.get(duration)
 
-    for d in DURATIONS.keys():
-        if value.endswith(d):
-            duration = d
-            product = value[:-len(d)-1]
-            break
+        if price is None:
+            await query.answer("❌ Invalid duration", show_alert=True)
+            return
 
-    if duration is None:
-        await query.answer("❌ Invalid duration", show_alert=True)
-        return
+        product_name = product_id
+        for p in PRODUCTS:
+            if p["id"] == product_id:
+                product_name = p["name"]
+                break
 
-    price = DURATIONS[duration]
-
-    product_name = product.replace("_", " ").upper()
-
-    await query.message.reply_photo(
-        photo=open(QR_IMAGE, "rb"),
-        caption=(
-            f"💳 Payment Details\n\n"
-            f"📦 Product: {product_name}\n"
-            f"⏳ Duration: {duration}\n"
-            f"💰 Price: ₹{price}\n"
-            f"🆔 UPI ID: {UPI_ID}\n\n"
-            "📷 QR Scan karke payment kare.\n"
-            "Payment ke baad UTR number bheje."
+        await query.message.reply_photo(
+            photo=open(QR_IMAGE, "rb"),
+            caption=(
+                "💳 Payment Details\n\n"
+                f"📦 Product: {product_name}\n"
+                f"⏳ Duration: {duration}\n"
+                f"💰 Price: ₹{price}\n"
+                f"🆔 UPI ID: {UPI_ID}\n\n"
+                "📷 QR Scan karke payment kare.\n"
+                "Payment ke baad UTR number bheje."
+            )
         )
-    )
+
 
 def main():
-
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
