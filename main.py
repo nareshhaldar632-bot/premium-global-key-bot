@@ -1,4 +1,5 @@
 import os
+from admin import admin_panel
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -141,7 +142,7 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
-
+    app.add_handler(CommandHandler("admin", admin_panel))
     print("Bot Started...")
 
     app.run_polling()
