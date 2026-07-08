@@ -69,7 +69,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📦 Select Product",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-            elif data == "home":
+    elif data == "home":
 
         keyboard = [
             [InlineKeyboardButton("📦 Products", callback_data="products")],
@@ -154,4 +154,16 @@ def main():
 
     create_tables()
 
-    app =
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("admin", admin))
+    app.add_handler(CallbackQueryHandler(button))
+
+    print("✅ Bot Started")
+
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()
