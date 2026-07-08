@@ -73,6 +73,19 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     elif query.data.startswith("product_"):
+            elif query.data.startswith("buy_"):
+        data = query.data.replace("buy_", "")
+        product_id, duration = data.split("_")
+
+        price = DURATIONS[duration]
+
+        await query.edit_message_text(
+            f"💳 Payment Details\n\n"
+            f"Product: {product_id}\n"
+            f"Duration: {duration}\n"
+            f"Amount: ₹{price}\n\n"
+            "Payment karne ke baad apna UTR number bheje."
+        )
         product_id = query.data.replace("product_", "")
 
         keyboard = []
