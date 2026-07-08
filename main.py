@@ -112,8 +112,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-    elif data.startswith("buy|"):
+elif data.startswith("buy|"):
 
         _, product_id, duration = data.split("|")
         duration = duration.replace("_", " ")
@@ -147,23 +146,16 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Access Denied")
         return
 
-    await update.message.reply_text(
-        "🔐 Admin Panel\n\n"
-        "✅ Bot Running Successfully
-        def main():
-
+    def main():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
-    # Commands
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("admin", admin))
-
-    # Buttons
     app.add_handler(CallbackQueryHandler(button))
 
-    print("✅ Nandu Global Key Bot Started Successfully...")
+    print("✅ Bot Started")
 
     app.run_polling()
 
