@@ -1,6 +1,6 @@
 import os
 from config import CHANNEL_URL, UPI_ID, QR_IMAGE
-from config import photo=open("qr.jpg", "rb")
+from config import photo=open(QR_IMAGE, "rb")
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
