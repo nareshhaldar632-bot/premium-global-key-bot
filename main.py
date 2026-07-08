@@ -1,6 +1,5 @@
 import os
 
-from config import CHANNEL_URL, UPI_ID, QR_IMAGE
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
@@ -9,6 +8,7 @@ from telegram.ext import (
     ContextTypes,
 )
 
+from config import CHANNEL_URL, UPI_ID, QR_IMAGE
 from database import create_tables, add_user
 from products import PRODUCTS, DURATIONS
 
@@ -16,7 +16,6 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     user = update.effective_user
 
     add_user(
@@ -26,18 +25,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     keyboard = [
-        [
-            InlineKeyboardButton(
-                "📦 Products",
-                callback_data="products"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📢 Join Channel",
-                url=CHANNEL_URL
-            )
-        ]
+        [InlineKeyboardButton("📦 Products", callback_data="products")],
+        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
     ]
 
     await update.message.reply_text(
@@ -46,23 +35,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     query = update.callback_query
     await query.answer()
 
     data = query.data
-
-
-    # Products
 
     if data == "products":
 
         keyboard = []
 
         for product in PRODUCTS:
-
             keyboard.append(
                 [
                     InlineKeyboardButton(
@@ -71,7 +54,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                 ]
             )
-
 
         keyboard.append(
             [
@@ -82,51 +64,40 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         )
 
-
         await query.edit_message_text(
             "📦 Select Product",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
-
-
-    # Home
-
     elif data == "home":
 
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    "📦 Products",
-                    callback_data="products"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    "📢 Join Channel",
-                    url=CHANNEL_URL
-                )
-            ]
+            [InlineKeyboardButton("📦 Products", callback_data="products")],
+            [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
         ]
 
-
-        await query.message.reply_photo(
-            photo=open("qr.jpg","rb"),
-            caption=(
-                "💳 Payment Details\n\n"
-                "📦 Product: Select Product\n"
-                "⏳ Duration: Select Duration\n"
-                f"💰 UPI ID: {UPI_ID}\n\n"
-                "📷 QR Scan karke payment kare."
-            )
-        )
-
-        await query.message.reply_text(
-            "Choose:",
+        await query.edit_message_text(
+            "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-    # Product Selected
+
+    elif data.startswith("product_"):
+
+        product_id = data.replace("product_", "")
+
+        keyboard = []
+
+        for duration, price in DURATIONS.items():
             keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        f"{duration} - ₹{price}",
+                        callback_data=f"buy_{product_id}_{duration}"
+                    )
+                ]
+            )
+
+        keyboard.append(
             [
                 InlineKeyboardButton(
                     "⬅ Back",
@@ -139,17 +110,24 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
+        elif data.startswith("buy_"):
 
-    elif data.startswith("buy_"):
+        value = data.replace("buy_", "", 1)
 
-        value = data.replace("buy_", "")
-        product_id, duration = value.rsplit("_", 1)
+        duration = None
+        product_id = None
 
-        price = DURATIONS.get(duration)
+        for d in DURATIONS.keys():
+            if value.endswith(d):
+                duration = d
+                product_id = value[:-len(d)-1]
+                break
 
-        if price is None:
+        if duration is None:
             await query.answer("❌ Invalid duration", show_alert=True)
             return
+
+        price = DURATIONS[duration]
 
         product_name = product_id
         for p in PRODUCTS:
@@ -172,12 +150,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
+    create_tables()
+
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
 
-    create_tables()
+    print("Bot Started...")
 
     app.run_polling()
 
