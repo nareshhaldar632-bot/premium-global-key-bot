@@ -127,72 +127,39 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     # Product Selected
 
-    elif data.startswith("product_"):
-
-        product_id = data.replace("product_", "")
-
-        keyboard = []
-
-        for duration, price in DURATIONS.items():
-
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        f"{duration} - ₹{price}",
-                        callback_data=f"buy_{product_id}_{duration}"
-                    )
-                ]
-            )
-
-        keyboard.append(
-            [
-                InlineKeyboardButton(
-                    "⬅ Back",
-                    callback_data="products"
-                )
-            ]
-        )
-
-        await query.edit_message_text(
-            "⏳ Select Duration",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-        # Buy
-
     elif data.startswith("buy_"):
 
-        buy_data = data.replace("buy_", "")
+    value = data.replace("buy_", "", 1)
 
-        duration = None
-        product = None
+    duration = None
+    product = None
 
-        for d in DURATIONS:
-            callback_duration = d.replace(" ", "_")
-            if buy_data.endswith(callback_duration):
-                duration = d
-                product = buy_data[:-(len(callback_duration) + 1)]
-                break
+    for d in DURATIONS.keys():
+        if value.endswith(d):
+            duration = d
+            product = value[:-len(d)-1]
+            break
 
-        if duration is None:
-            await query.message.reply_text("❌ Invalid duration")
-            return
+    if duration is None:
+        await query.answer("❌ Invalid duration", show_alert=True)
+        return
 
-        product_name = product.replace("_", " ").title()
-        price = DURATIONS[duration]
+    price = DURATIONS[duration]
 
-        await query.message.reply_photo(
-            photo=open(QR_IMAGE, "rb"),
-            caption=(
-                "💳 Payment Details\n\n"
-                f"📦 Product: {product}\n"
-                f"⏳ Duration: {duration}\n"
-                f"💰 Price: ₹{price}\n"
-                f"🆔 UPI ID: {UPI_ID}\n\n"
-                "📷 QR Scan karke payment kare.\n"
-                "Payment ke baad UTR number bheje."
-            )
+    product_name = product.replace("_", " ").upper()
+
+    await query.message.reply_photo(
+        photo=open(QR_IMAGE, "rb"),
+        caption=(
+            f"💳 Payment Details\n\n"
+            f"📦 Product: {product_name}\n"
+            f"⏳ Duration: {duration}\n"
+            f"💰 Price: ₹{price}\n"
+            f"🆔 UPI ID: {UPI_ID}\n\n"
+            "📷 QR Scan karke payment kare.\n"
+            "Payment ke baad UTR number bheje."
         )
-
+    )
 
 def main():
 
