@@ -50,3 +50,41 @@ def add_user(user_id, username, first_name):
 
     conn.commit()
     conn.close()
+def add_order(order_id, user_id, product, duration, amount, utr):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute("""
+    INSERT INTO orders(order_id, user_id, product, duration, amount, utr, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (order_id, user_id, product, duration, amount, utr, "PENDING"))
+
+    conn.commit()
+    conn.close()
+
+
+def update_order_status(order_id, status):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute(
+        "UPDATE orders SET status=? WHERE order_id=?",
+        (status, order_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_order(order_id):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT * FROM orders WHERE order_id=?",
+        (order_id,)
+    )
+
+    data = cur.fetchone()
+    conn.close()
+    return data
