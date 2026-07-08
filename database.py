@@ -1,7 +1,6 @@
-
+import sqlite3
 
 DB_NAME = "store.db"
-
 
 def connect():
     return sqlite3.connect(DB_NAME)
