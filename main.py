@@ -85,14 +85,36 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             photo=open(QR_IMAGE, "rb"),
             caption=(
                 "💳 Payment करें\n\n"
-                "Payment के बाद अपना UTR Number भेजें।\n\n"
-                "Example: 123456789012"
-            ),
-        )
-    elif query.data.startswith("approve_"):
-        order_id = query.data.replace("approve_", "")
+                elif query.data.startswith("approve_"):
+    order_id = query.data.replace("approve_", "")
 
-        await query.edit_message_text(
+    update_order_status(order_id, "APPROVED")
+
+    order = get_order(order_id)
+    user_id = order[2]
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text="✅ Payment Approved!\n\nAdmin will send your key shortly."
+    )
+
+    await query.edit_message_text("✅ Order Approved")
+
+
+elif query.data.startswith("reject_"):
+    order_id = query.data.replace("reject_", "")
+
+    update_order_status(order_id, "REJECTED")
+
+    order = get_order(order_id)
+    user_id = order[2]
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text="❌ Payment Rejected.\nPlease contact admin."
+    )
+
+    await query.edit_message_text("❌ Order Rejected")
             f"✅ Order {order_id} Approved"
         )
 
