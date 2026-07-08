@@ -1,4 +1,5 @@
 import os
+from config import CHANNEL_URL, UPI_ID, QR_IMAGE
 from config import CHANNEL_URL, QR_IMAGE, UPI_ID
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
