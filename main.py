@@ -104,9 +104,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("buy_"):
         parts = data.split("_")
         product = parts[1]
-        duration = "_".join(parts[2:])
+        duration = " ".join(parts[2:])
 
-        price = DURATIONS.get(duration, 0)
+        print(product, duration, price)
 
         await query.message.reply_photo(
             photo=open(QR_IMAGE, "rb"),
