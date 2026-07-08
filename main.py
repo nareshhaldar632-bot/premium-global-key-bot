@@ -30,36 +30,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_text(
-        "👋 Welcome to Nandu Global Key Store\n\nChoose an option:",
-        reply_markup=InlineKeyboardMarkup(keyboard),
+    "👋 Welcome to Nandu Global Key Store\n\nChoose an option:",
+    reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-
-    query = update.callback_query
-    await query.answer()
-
-    if query.data == "products":
-        keyboard = []
-
-        for product in PRODUCTS:
-            keyboard.append([
-                InlineKeyboardButton(
-                    product["name"],
-                    callback_data=f"product_{product['id']}"
-                )
-            ])
-
-        await query.edit_message_text(
-            "📦 Select Product",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-        def main():
+def main():
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button))
+
     create_tables()
 
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
