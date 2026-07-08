@@ -157,21 +157,31 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-
-    # Buy
+        # Buy
 
     elif data.startswith("buy_"):
 
-        parts = data.split("_")
+        buy_data = data.replace("buy_", "")
 
-        product = parts[1]
+        duration = None
+        product = None
 
-duration = parts[-2] + " " + parts[-1]
+        for d in DURATIONS:
+            callback_duration = d.replace(" ", "_")
+            if buy_data.endswith(callback_duration):
+                duration = d
+                product = buy_data[:-(len(callback_duration) + 1)]
+                break
 
-price = DURATIONS.get(duration, 0)
-await query.message.reply_photo(
-    photo=open(QR_IMAGE, "rb"),
+        if duration is None:
+            await query.message.reply_text("❌ Invalid duration")
+            return
+
+        product_name = product.replace("_", " ").title()
+        price = DURATIONS[duration]
+
+        await query.message.reply_photo(
+            photo=open(QR_IMAGE, "rb"),
             caption=(
                 "💳 Payment Details\n\n"
                 f"📦 Product: {product}\n"
