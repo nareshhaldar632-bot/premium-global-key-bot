@@ -167,7 +167,7 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"✅ Admin Panel\n\n👤 Total Users: {total}"
     )
     def main():
-    create_tables()
+        create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
