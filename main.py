@@ -8,9 +8,10 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from database import create_tables, add_user
+from database import create_tables, add_user, add_order
+from config import CHANNEL_URL, QR_IMAGE, ADMIN_ID
 from products import PRODUCTS, DURATIONS
-from config import CHANNEL_URL
+from config import CHANNEL_URL, QR_IMAGE, ADMIN_ID
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -78,12 +79,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         price = DURATIONS[duration]
 
-        await query.edit_message_text(
-            f"💳 Payment Details\n\n"
-            f"Product: {product_id}\n"
-            f"Duration: {duration}\n"
-            f"Amount: ₹{price}\n\n"
-            "Payment ke baad UTR number bheje."
+        await query.message.reply_photo(
+    photo=open(QR_IMAGE, "rb"),
+    caption=(
+        f"💳 Payment Details\n\n"
+        f"📦 Product: {product_id}\n"
+        f"⏳ Duration: {duration}\n"
+        f"💰 Amount: ₹{price}\n\n"
+        f"🏦 UPI ID:\n7425974582@ibl\n\n"
+        "📷 QR Scan karke payment kare.\n\n"
+        "Payment ke baad apna UTR Number bheje."
+    )
         )
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
