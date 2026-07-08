@@ -1,6 +1,6 @@
 ADMIN_ID = 8469175911
 
-CHANNEL_URL = "https://t.me/PREMIUMGLOBALKEYbot"
+CHANNEL_URL = "https://t.me/primesupport_boi"
 
 UPI_ID = "7425974582@ibl"
 
