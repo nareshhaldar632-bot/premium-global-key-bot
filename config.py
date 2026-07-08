@@ -1,4 +1,4 @@
-startqr = qr.jpg
+QR_IMAGE = "qr.jpg"
 UPI_ID = ADMIN_ID = 8469175911"7425974582@ibl"
 ADMIN_ID = 8469175911
 CHANNEL_URL = "https://t.me/primesupport_boi"
