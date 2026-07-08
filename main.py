@@ -57,8 +57,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button))
-
     create_tables()
 
     app.run_polling()
