@@ -52,8 +52,27 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📦 Select Product",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-    elif    
-    query.data.startswith("product_"):
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "products":
+        keyboard = []
+
+        for product in PRODUCTS:
+            keyboard.append([
+                InlineKeyboardButton(
+                    product["name"],
+                    callback_data=f"product_{product['id']}"
+                )
+            ])
+
+        await query.edit_message_text(
+            "📦 Select Product",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    elif query.data.startswith("product_"):
         product_id = query.data.replace("product_", "")
 
         keyboard = []
