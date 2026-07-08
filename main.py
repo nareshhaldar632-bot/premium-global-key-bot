@@ -110,7 +110,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-        elif data.startswith("buy_"):
+    elif data.startswith("buy_"):
 
         value = data.replace("buy_", "", 1)
 
