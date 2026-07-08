@@ -8,7 +8,7 @@ from telegram.ext import (
 )
 
 from database import create_tables, add_user
-from products import PRODUCTS
+from products import PRODUCTS, DURATIONS
 from config import CHANNEL_URL
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -50,6 +50,24 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await query.edit_message_text(
             "📦 Select Product",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+    elif    
+    query.data.startswith("product_"):
+        product_id = query.data.replace("product_", "")
+
+        keyboard = []
+
+        for duration, price in DURATIONS.items():
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{duration} - ₹{price}",
+                    callback_data=f"buy_{product_id}_{duration}"
+                )
+            ])
+
+        await query.edit_message_text(
+            "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
