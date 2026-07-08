@@ -1,11 +1,12 @@
 import os
-
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
     CallbackQueryHandler,
+    MessageHandler,
     ContextTypes,
+    filters,
 )
 
 from config import CHANNEL_URL, UPI_ID, QR_IMAGE
@@ -14,6 +15,7 @@ from products import PRODUCTS, DURATIONS
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = 8469175911
+user_data = {}
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -140,7 +142,25 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
+async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    user = update.effective_user
+
+    utr = update.message.text
+
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            f"💳 New Payment\n\n"
+            f"👤 User: {user.first_name}\n"
+            f"🆔 User ID: {user.id}\n"
+            f"🔢 UTR: {utr}"
+        )
+    )
+
+    await update.message.reply_text(
+        "✅ UTR Received.\n\nAdmin verification ke baad key bhej di jayegi."
+    )
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.effective_user.id != ADMIN_ID:
@@ -159,6 +179,12 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("admin", admin))
     app.add_handler(CallbackQueryHandler(button))
+    app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        receive_utr
+    )
+    )
 
     print("✅ Bot Started")
 
