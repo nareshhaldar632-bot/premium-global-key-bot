@@ -153,15 +153,6 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
 
-    await update.message.reply_text(
-        "✅ Admin Panel\n\n"
-        "Users feature coming soon."
-    )
-
-async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != ADMIN_ID:
-        return
-
     total = len(create_tables())
     await update.message.reply_text(
         f"✅ Admin Panel\n\n👤 Total Users: {total}"
@@ -175,8 +166,16 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     app.add_handler(CommandHandler("admin", admin))
     app.add_handler(CallbackQueryHandler(button))
 
-    print("Bot Started...")
+    def main():
+    create_tables()
 
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("admin", admin))
+    app.add_handler(CallbackQueryHandler(button))
+
+    print("Bot Started...")
     app.run_polling()
 
 
