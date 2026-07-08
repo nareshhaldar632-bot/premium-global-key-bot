@@ -1,10 +1,6 @@
 import os
 
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-)
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -30,18 +26,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     keyboard = [
-        [
-            InlineKeyboardButton(
-                "📦 Products",
-                callback_data="products"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📢 Join Channel",
-                url=CHANNEL_URL
-            )
-        ]
+        [InlineKeyboardButton("📦 Products", callback_data="products")],
+        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
     ]
 
     await update.message.reply_text(
@@ -51,7 +37,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     query = update.callback_query
     await query.answer()
 
@@ -62,7 +47,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = []
 
         for product in PRODUCTS:
-
             keyboard.append(
                 [
                     InlineKeyboardButton(
@@ -71,7 +55,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                 ]
             )
-                    keyboard.append(
+
+        keyboard.append(
             [
                 InlineKeyboardButton(
                     "⬅ Back",
@@ -84,22 +69,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📦 Select Product",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-    elif data == "home":
+            elif data == "home":
 
         keyboard = [
-            [
-                InlineKeyboardButton(
-                    "📦 Products",
-                    callback_data="products"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    "📢 Join Channel",
-                    url=CHANNEL_URL
-                )
-            ]
+            [InlineKeyboardButton("📦 Products", callback_data="products")],
+            [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
         ]
 
         await query.edit_message_text(
@@ -139,7 +113,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-            elif data.startswith("buy|"):
+    elif data.startswith("buy|"):
 
         _, product_id, duration = data.split("|")
         duration = duration.replace("_", " ")
@@ -180,6 +154,4 @@ def main():
 
     create_tables()
 
-    app = Application.builder().token(BOT_TOKEN).build()
-
-   
+    app =
