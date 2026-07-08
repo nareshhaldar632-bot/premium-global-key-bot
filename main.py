@@ -1,28 +1,5 @@
 import os
 from products import PRODUCTS, DURATIONS
-    elif query.data.startswith("product_"):
-        product_id = query.data.replace("product_", "")
-
-        product_name = ""
-        for p in PRODUCTS:
-            if p["id"] == product_id:
-                product_name = p["name"]
-                break
-
-        keyboard = []
-
-        for duration, price in DURATIONS.items():
-            keyboard.append([
-                InlineKeyboardButton(
-                    f"{duration} - ₹{price}",
-                    callback_data="dummy"
-                )
-            ])
-
-        await query.edit_message_text(
-            f"📦 {product_name}\n\nSelect Duration:",
-            reply_markup=InlineKeyboardMarkup(keyboard),
-        )
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
