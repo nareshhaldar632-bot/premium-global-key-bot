@@ -2,7 +2,7 @@ ADMIN_ID = 8469175911
 
 CHANNEL_URL = "https://t.me/PREMIUMGLOBALKEYbot"
 
-UPI_ID = "apnaupi@bank"
+UPI_ID = "7425974582@ibl"
 
 QR_IMAGE = "qr.jpg"
 
