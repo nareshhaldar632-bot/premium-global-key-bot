@@ -1,6 +1,10 @@
 import os
 
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -26,8 +30,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     keyboard = [
-        [InlineKeyboardButton("📦 Products", callback_data="products")],
-        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
+        [
+            InlineKeyboardButton(
+                "📦 Products",
+                callback_data="products"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Join Channel",
+                url=CHANNEL_URL
+            )
+        ]
     ]
 
     await update.message.reply_text(
@@ -37,6 +51,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     query = update.callback_query
     await query.answer()
 
@@ -47,6 +62,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard = []
 
         for product in PRODUCTS:
+
             keyboard.append(
                 [
                     InlineKeyboardButton(
@@ -55,8 +71,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                 ]
             )
-
-        keyboard.append(
+                    keyboard.append(
             [
                 InlineKeyboardButton(
                     "⬅ Back",
@@ -73,22 +88,33 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "home":
 
         keyboard = [
-            [InlineKeyboardButton("📦 Products", callback_data="products")],
-            [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
+            [
+                InlineKeyboardButton(
+                    "📦 Products",
+                    callback_data="products"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "📢 Join Channel",
+                    url=CHANNEL_URL
+                )
+            ]
         ]
 
         await query.edit_message_text(
             "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
             reply_markup=InlineKeyboardMarkup(keyboard)
-                )
+        )
 
-        elif data.startswith("product_"):
+    elif data.startswith("product_"):
 
         product_id = data.replace("product_", "")
 
         keyboard = []
 
         for duration, price in DURATIONS.items():
+
             callback = duration.replace(" ", "_")
 
             keyboard.append(
@@ -109,12 +135,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         )
 
-                await query.edit_message_text(
+        await query.edit_message_text(
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-    elif data.startswith("buy|"):
+            elif data.startswith("buy|"):
 
         _, product_id, duration = data.split("|")
         duration = duration.replace("_", " ")
@@ -137,30 +162,24 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"💰 Price: ₹{price}\n"
                 f"🆔 UPI ID: {UPI_ID}\n\n"
                 "📷 QR Scan karke payment kare.\n"
-                "Payment ke baad UTR number bheje."
+                "✅ Payment ke baad UTR number bheje."
             )
         )
 
 
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     if update.effective_user.id != ADMIN_ID:
         await update.message.reply_text("❌ Access Denied")
         return
 
+    await update.message.reply_text("✅ Admin Panel")
+
 
 def main():
+
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("admin", admin))
-    app.add_handler(CallbackQueryHandler(button))
-
-    print("✅ Bot Started")
-
-    app.run_polling()
-
-
-if __name__ == "__main__":
-    main()
+   
