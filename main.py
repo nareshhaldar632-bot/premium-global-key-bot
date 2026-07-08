@@ -128,17 +128,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if product["id"] == product_id:
                 product_name = product["name"]
                 break
-
+        user_data[query.from_user.id] = {
+    "product": product_name,
+    "duration": duration
+        }
         await query.message.reply_photo(
             photo=open(QR_IMAGE, "rb"),
             caption=(
-                "💳 Payment Details\n\n"
-                f"📦 Product: {product_name}\n"
-                f"⏳ Duration: {duration}\n"
-                f"💰 Price: ₹{price}\n"
-                f"🆔 UPI ID: {UPI_ID}\n\n"
-                "📷 QR Scan karke payment kare.\n"
-                "✅ Payment ke baad UTR number bheje."
+    "💳 Payment Details\n\n"
+    f"📦 Product: {product_name}\n"
+    f"⏳ Duration: {duration}\n"
+    f"💰 Price: ₹{price}\n"
+    f"🆔 UPI ID: {UPI_ID}\n\n"
+    "📷 QR Scan karke payment kare.\n"
+    "✅ Payment ke baad UTR number bheje."
+            )
             )
         )
 
@@ -147,15 +151,20 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
 
     utr = update.message.text
+    info = user_data.get(user.id, {})
+product = info.get("product", "Unknown")
+duration = info.get("duration", "Unknown")
 
     await context.bot.send_message(
         chat_id=ADMIN_ID,
-        text=(
-            f"💳 New Payment\n\n"
-            f"👤 User: {user.first_name}\n"
-            f"🆔 User ID: {user.id}\n"
-            f"🔢 UTR: {utr}"
-        )
+       text=(
+    f"💳 New Payment\n\n"
+    f"👤 User: {user.first_name}\n"
+    f"🆔 User ID: {user.id}\n"
+    f"📦 Product: {product}\n"
+    f"⏳ Duration: {duration}\n"
+    f"🔢 UTR: {utr}"
+       )
     )
 
     await update.message.reply_text(
