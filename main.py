@@ -56,6 +56,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
 
+    
     elif query.data.startswith("product_"):
         keyboard = []
 
@@ -84,8 +85,20 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Example: 123456789012"
             ),
         )
+    elif query.data.startswith("approve_"):
+        order_id = query.data.replace("approve_", "")
 
-    elif query.data == "back":
+        await query.edit_message_text(
+            f"✅ Order {order_id} Approved"
+        )
+
+    elif query.data.startswith("reject_"):
+        order_id = query.data.replace("reject_", "")
+
+        await query.edit_message_text(
+            f"❌ Order {order_id} Rejected"
+        )
+   elif query.data == "back":
         keyboard = [
             [InlineKeyboardButton("📦 Products", callback_data="products")]
         ]
