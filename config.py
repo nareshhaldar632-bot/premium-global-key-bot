@@ -1,6 +1,6 @@
 ADMIN_ID = 8469175911
 
-CHANNEL_URL = "https://t.me/primesupport_boi
+CHANNEL_URL = "https://t.me/
 
 QR_IMAGE = "qr.jpg"
 
