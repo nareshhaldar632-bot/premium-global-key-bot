@@ -1,4 +1,7 @@
 import os
+from database import add_order
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import time
 from database import create_tables, add_user
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -96,9 +99,35 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     utr_number = update.message.text
 
+    order_id = str(int(time.time()))
+
+    add_order(
+        order_id,
+        update.effective_user.id,
+        "Unknown",
+        "Unknown",
+        0,
+        utr_number
+    )
+
+    keyboard = [[
+        InlineKeyboardButton("✅ Approve", callback_data=f"approve_{order_id}"),
+        InlineKeyboardButton("❌ Reject", callback_data=f"reject_{order_id}")
+    ]]
+
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            f"🛒 New Order\n\n"
+            f"Order ID: {order_id}\n"
+            f"User: {update.effective_user.id}\n"
+            f"UTR: {utr_number}"
+        ),
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
     await update.message.reply_text(
-        f"✅ UTR Received: {utr_number}\n\n"
-        "Admin payment verify करेगा।"
+        "✅ UTR Received.\n\nAdmin payment verify karega."
     )
 
 
