@@ -65,9 +65,17 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)],
         ]
 
-        await query.edit_message_text(
-            "👋 Welcome to Nandu Global Key Store\n\nChoose an option:",
-            reply_markup=InlineKeyboardMarkup(keyboard),
+        await query.message.reply_photo(
+    photo=open(QR_IMAGE, "rb"),
+    caption=(
+        f"💳 Payment Details\n\n"
+        f"📦 Product: {product}\n"
+        f"⏳ Duration: {duration}\n"
+        f"💰 Amount: ₹{price}\n\n"
+        f"🏦 UPI ID:\n{UPI_ID}\n\n"
+        "📷 QR Scan karke payment kare.\n\n"
+        "Payment ke baad apna UTR Number bheje."
+    )
         )
 
     # Product Selected
