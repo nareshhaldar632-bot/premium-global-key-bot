@@ -33,8 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     "👋 Welcome to Nandu Global Key Store\n\nChoose an option:",
     reply_markup=InlineKeyboardMarkup(keyboard)
     )
-
-def main():
+    def main():
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
