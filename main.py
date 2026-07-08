@@ -9,7 +9,6 @@ from telegram.ext import (
 )
 
 from database import create_tables, add_user
-from config import CHANNEL_URL
 from products import PRODUCTS, DURATIONS
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
