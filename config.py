@@ -1,6 +1,6 @@
 ADMIN_ID = 8469175911
 
-CHANNEL_URL = "https://t.me/
+CHANNEL_URL = "https://t.me/your_channel_name"
 
 QR_IMAGE = "qr.jpg"
 
