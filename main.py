@@ -38,7 +38,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if query.data == "products":
-   0     keyboard = []
+        keyboard = []
 
         for product in PRODUCTS:
             keyboard.append([
@@ -51,6 +51,38 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             "📦 Select Product",
             reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    elif query.data.startswith("product_"):
+        product_id = query.data.replace("product_", "")
+
+        keyboard = []
+
+        for duration, price in DURATIONS.items():
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{duration} - ₹{price}",
+                    callback_data=f"buy_{product_id}_{duration}"
+                )
+            ])
+
+        await query.edit_message_text(
+            "⏳ Select Duration",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    elif query.data.startswith("buy_"):
+        data = query.data.replace("buy_", "")
+        product_id, duration = data.split("_")
+
+        price = DURATIONS[duration]
+
+        await query.edit_message_text(
+            f"💳 Payment Details\n\n"
+            f"Product: {product_id}\n"
+            f"Duration: {duration}\n"
+            f"Amount: ₹{price}\n\n"
+            "Payment ke baad UTR number bheje."
         )
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
