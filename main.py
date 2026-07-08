@@ -157,7 +157,17 @@ async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✅ Admin Panel\n\n"
         "Users feature coming soon."
     )
-def main():
+    from telegram.ext import MessageHandler, filters
+
+async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
+
+    total = len(create_tables())
+    await update.message.reply_text(
+        f"✅ Admin Panel\n\n👤 Total Users: {total}"
+    )
+    def main():
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
