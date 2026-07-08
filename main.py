@@ -77,52 +77,27 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
         )
 
-    # Product Selected
-    elif data.startswith("product_"):
-        product_id = data.replace("product_", "")
-
-        keyboard = []
-
-        for duration, price in DURATIONS.items():
-            keyboard.append([
-                InlineKeyboardButton(
-                    f"{duration} - ₹{price}",
-                    callback_data=f"buy_{product_id}_{duration}"
-                )
-            ])
-
-        keyboard.append([
-            InlineKeyboardButton("⬅ Back", callback_data="products")
-        ])
-
-        await query.edit_message_text(
-            "⏳ Select Duration",
-            reply_markup=InlineKeyboardMarkup(keyboard),
-        )
-
-    # Buy
+  # Buy
 elif data.startswith("buy_"):
     parts = data.split("_")
+
     product = parts[1]
     duration = "_".join(parts[2:])
 
     price = DURATIONS.get(duration, 0)
 
-    print(product, duration, price)
-    
-
-        await query.message.reply_photo(
-            photo=open(QR_IMAGE, "rb"),
-            caption=(
-                f"💳 Payment Details\n\n"
-                f"📦 Product: {product}\n"
-                f"⏳ Duration: {duration}\n"
-                f"💰 Price: ₹{price}\n"
-                f"🆔 UPI ID: {UPI_ID}\n\n"
-                "📷 QR Scan karke payment kare.\n"
-                "Payment ke baad UTR number bheje."
-            )
+    await query.message.reply_photo(
+        photo=open(QR_IMAGE, "rb"),
+        caption=(
+            "💳 Payment Details\n\n"
+            f"📦 Product: {product}\n"
+            f"⌛ Duration: {duration}\n"
+            f"💰 Price: ₹{price}\n"
+            f"🆔 UPI ID: {UPI_ID}\n\n"
+            "📷 QR Scan karke payment kare.\n"
+            "Payment ke baad UTR number bheje."
         )
+    )  
     
     
 
