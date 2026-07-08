@@ -101,7 +101,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 # Buy
-elif data.startswith("buy_"):
+if data.startswith("buy_"):
     parts = data.split("_")
     product = parts[1]
     duration = "_".join(parts[2:])
