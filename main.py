@@ -153,7 +153,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     elif data.startswith("approve|"):
 
-    user_id = int(data.split("|")[1])
+        user_id = int(data.split("|")[1])
 
     product = user_data.get(user_id, {}).get("product")
 
