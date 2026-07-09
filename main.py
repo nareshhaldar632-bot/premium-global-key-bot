@@ -236,79 +236,37 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     elif data.startswith("buy|"):
+    elif data.startswith("buy|"):
+        # buy वाला code
+        pass
 
 
-        _, product_id, duration
-            elif data.startswith("approve|"):
+    elif data.startswith("approve|"):
 
-        user_id = int(
-            data.split("|")[1]
-        )
+        user_id = int(data.split("|")[1])
 
+        info = user_data.get(user_id, {})
 
-        info = user_data.get(
-            user_id,
-            {}
-        )
-
-
-        product = info.get(
-            "product"
-        )
-
+        product = info.get("product")
 
         key = "No Key Available"
 
-
         if product in KEYS and KEYS[product]:
-
             key = KEYS[product].pop(0)
 
-
-
         await context.bot.send_message(
-
             chat_id=user_id,
-
-            text=(
-
-                "✅ Payment Approved!\n\n"
-
-                f"🔑 Your Key:\n{key}\n\n"
-
-                "Thank you for using Nandu Global Key Store."
-
-            )
-
+            text=f"✅ Payment Approved\n\n🔑 Your Key: {key}"
         )
-
-
-        await query.edit_message_text(
-            "✅ Payment Approved"
-        )
-
 
 
     elif data.startswith("reject|"):
 
-
-        user_id = int(
-            data.split("|")[1]
-        )
-
+        user_id = int(data.split("|")[1])
 
         await context.bot.send_message(
-
             chat_id=user_id,
-
-            text=(
-
-                "❌ Payment Rejected.\n\n"
-
-                "Please contact admin."
-
-            )
-
+            text="❌ Payment Rejected"
         )
 
 
