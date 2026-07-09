@@ -134,13 +134,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if product["id"] == product_id:
                 product_name = product["name"]
                 break
-        user_data[query.from_user.id] = {
+user_data[query.from_user.id] = {
     "order_id": order_id,
     "product": product_name,
     "duration": duration,
     "amount": price
-        }
-        add_order(
+}
+
+add_order(
     order_id,
     query.from_user.id,
     product_name,
@@ -149,8 +150,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ""
 )
 
-await query.message.reply_photo(
-            photo=open(QR_IMAGE, "rb"),
             caption=(
     "💳 Payment Details\n\n"
     f"📦 Product: {product_name}\n"
