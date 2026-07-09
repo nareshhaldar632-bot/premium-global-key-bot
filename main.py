@@ -152,7 +152,7 @@ await query.message.reply_photo(
     )
 )
 
-elif data.startswith("approve|"):
+  elif data.startswith("approve|"):
     user_id = int(data.split("|")[1])
 
     product = user_data.get(user_id, {}).get("product")
