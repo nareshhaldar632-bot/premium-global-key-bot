@@ -150,7 +150,7 @@ await query.message.reply_photo(
         "📷 QR Scan karke payment kare.\n"
         "✅ Payment ke baad UTR number bheje."
     )
-
+)
     elif data.startswith("approve|"):
     user_id = int(data.split("|")[1])
 
