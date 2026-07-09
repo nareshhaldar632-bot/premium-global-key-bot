@@ -193,7 +193,6 @@ await query.message.reply_photo(
 
 
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     user = update.effective_user
     utr = update.message.text
 
@@ -233,17 +232,12 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == "__main__":
-
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-
-    app.add_handler(
-        CallbackQueryHandler(button)
-    )
-
+    app.add_handler(CallbackQueryHandler(button))
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
