@@ -115,9 +115,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
 
 await query.edit_message_text(
-"🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
-reply_markup=InlineKeyboardMarkup(keyboard)
-        )
+    "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
+    reply_markup=InlineKeyboardMarkup(keyboard)
 
 elif data.startswith("product_"):
 
