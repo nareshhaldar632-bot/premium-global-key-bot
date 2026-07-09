@@ -149,3 +149,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "✅ Payment ke baad UTR number bheje."
             )
         )
+if __name__ == "__main__":
+    create_tables()
+
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CallbackQueryHandler(button))
+
+    print("Bot started...")
+
+    app.run_polling()
