@@ -103,7 +103,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [
                 InlineKeyboardButton(
                     "🛒 Products",
-                    callback_data="products"
+
+       callback_data="products"
                 )
             ],
             [
@@ -114,9 +115,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         ]
 
-        await query.edit_message_text(
-            "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
-            reply_markup=InlineKeyboardMarkup(keyboard)
+        await
+query.edit_message_text(
+            "🔥 Welcome to Nandu
+Global Key Store\n\nChoose an option:",
+reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
 elif data.startswith("product_"):
