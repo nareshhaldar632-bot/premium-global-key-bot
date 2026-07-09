@@ -244,6 +244,12 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     utr = update.message.text
 
+    if check_utr(utr):
+    await update.message.reply_text(
+        "❌ This UTR is already used."
+    )
+    return
+
     info = user_data.get(user.id)
 
     if not info:
