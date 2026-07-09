@@ -1,11 +1,7 @@
 import os
 import uuid
 
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup
-)
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 
 from telegram.ext import (
     Application,
@@ -19,17 +15,9 @@ from telegram.ext import (
 from products import PRODUCTS, DURATIONS
 from keys import KEYS
 
-from config import (
-    CHANNEL_URL,
-    UPI_ID,
-    QR_IMAGE
-)
+from config import CHANNEL_URL, UPI_ID, QR_IMAGE
 
-from database import (
-    create_tables,
-    add_user,
-    add_order
-)
+from database import create_tables, add_user, add_order
 
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -94,7 +82,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             )
 
-
         keyboard.append(
             [
                 InlineKeyboardButton(
@@ -103,7 +90,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
             ]
         )
-
 
         await query.edit_message_text(
             "🛒 Select Product",
@@ -128,7 +114,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ]
         ]
 
-
         await query.edit_message_text(
             "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
             reply_markup=InlineKeyboardMarkup(keyboard)
@@ -149,7 +134,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 " ",
                 "_"
             )
-
 
             keyboard.append(
                 [
@@ -180,7 +164,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif data.startswith("buy|"):
 
-
         _, product_id, duration = data.split("|")
 
 
@@ -207,7 +190,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if product["id"] == product_id:
 
                 product_name = product["name"]
-
                 break
 
 
@@ -224,14 +206,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         add_order(
-
             order_id,
             query.from_user.id,
             product_name,
             duration,
             price,
             ""
-
         )
 
 
@@ -246,7 +226,63 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                 f"📦 Product: {product_name}\n"
                 f"⏳ Duration: {duration}\n"
-                f"
+                f"💰 Price: ₹{price}\n"
+                f"🆔 UPI ID: {UPI_ID}\n\n"
+
+                "📷 QR Scan karke payment kare.\n"
+                "✅ Payment ke baad UTR number bheje."
+
+            )
+
+        )
+
+
+    elif data.startswith("approve|"):
+
+        user_id = int(
+            data.split("|")[1]
+        )
+
+
+        info = user_data.get(
+            user_id,
+            {}
+        )
+
+
+        product = info.get(
+            "product"
+        )
+
+
+        key = "No Key Available"
+
+
+        if product in KEYS and KEYS[product]:
+
+            key = KEYS[product].pop(0)
+
+
+        await context.bot.send_message(
+
+            chat_id=user_id,
+
+            text=(
+
+                "✅ Payment Approved!\n\n"
+
+                f"🔑 Your Key:\n{key}\n\n"
+
+                "Thank you for using Nandu Global Key Store."
+
+            )
+
+        )
+
+
+        await query.edit_message_text(
+            "✅ Payment Approved"
+        )
             elif data.startswith("reject|"):
 
         user_id = int(
@@ -272,19 +308,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
-async def receive_utr(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
 
     utr = update.message.text
 
 
-    info = user_data.get(
-        user.id
-    )
+    info = user_data.get(user.id)
 
 
     if not info:
@@ -293,7 +324,9 @@ async def receive_utr(
 
 
     keyboard = [
+
         [
+
             InlineKeyboardButton(
                 "✅ Approve",
                 callback_data=f"approve|{user.id}"
@@ -303,7 +336,9 @@ async def receive_utr(
                 "❌ Reject",
                 callback_data=f"reject|{user.id}"
             )
+
         ]
+
     ]
 
 
@@ -341,7 +376,6 @@ async def receive_utr(
 
 if __name__ == "__main__":
 
-
     create_tables()
 
 
@@ -374,9 +408,7 @@ if __name__ == "__main__":
     )
 
 
-    print(
-        "Bot Started..."
-    )
+    print("Bot Started...")
 
 
     app.run_polling()
