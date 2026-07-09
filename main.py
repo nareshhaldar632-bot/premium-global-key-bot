@@ -149,6 +149,39 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "✅ Payment ke baad UTR number bheje."
             )
         )
+    elif data.startswith("approve|"):
+
+        user_id = int(data.split("|")[1])
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                "✅ Payment Approved!\n\n"
+                "🎉 Your order has been confirmed.\n"
+                "Thank you for using Nandu Global Key Store."
+            )
+        )
+
+        await query.edit_message_text(
+            "✅ Payment Approved"
+        )
+
+
+    elif data.startswith("reject|"):
+
+        user_id = int(data.split("|")[1])
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                "❌ Payment Rejected.\n\n"
+                "Please contact admin if you think this is a mistake."
+            )
+        )
+
+        await query.edit_message_text(
+            "❌ Payment Rejected"
+        )
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     utr = update.message.text
