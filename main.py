@@ -151,24 +151,26 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     utr = update.message.text
     info = user_data.get(user.id, {})
-product = info.get("product", "Unknown")
-duration = info.get("duration", "Unknown")
+
+    product = info.get("product", "Unknown")
+    duration = info.get("duration", "Unknown")
 
     await context.bot.send_message(
         chat_id=ADMIN_ID,
-       text=(
-    f"💳 New Payment\n\n"
-    f"👤 User: {user.first_name}\n"
-    f"🆔 User ID: {user.id}\n"
-    f"📦 Product: {product}\n"
-    f"⏳ Duration: {duration}\n"
-    f"🔢 UTR: {utr}"
-       )
+        text=(
+            f"💳 New Payment\n\n"
+            f"👤 User: {user.first_name}\n"
+            f"🆔 User ID: {user.id}\n"
+            f"📦 Product: {product}\n"
+            f"⏳ Duration: {duration}\n"
+            f"🔢 UTR: {utr}"
+        )
     )
 
     await update.message.reply_text(
         "✅ UTR Received.\n\nAdmin verification ke baad key bhej di jayegi."
     )
+
 async def admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.effective_user.id != ADMIN_ID:
