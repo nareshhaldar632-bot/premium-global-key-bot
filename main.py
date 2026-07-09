@@ -37,27 +37,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user.first_name
     )
 
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                "🛒 Products",
-                callback_data="products"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                "📢 Join Channel",
-                url=CHANNEL_URL
-            )
-        ]
+keyboard = [
+    [
+        InlineKeyboardButton(
+            "🛒 Products",
+            callback_data="products"
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            "📢 Join Channel",
+            url=CHANNEL_URL
+        )
     ]
+]
 
-    await update.message.reply_text(
-        "🔥 Welcome to Nandu Global Key
-Store\n\nChoose an option:",
-
-reply_markup=InlineKeyboardMarkup(key
-board)
+await update.message.reply_text(
+    "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
+    reply_markup=InlineKeyboardMarkup(keyboard)
 )
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
