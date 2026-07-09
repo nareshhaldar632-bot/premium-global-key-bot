@@ -148,13 +148,11 @@ await query.message.reply_photo(
         f"💰 Price: ₹{price}\n"
         f"🆔 UPI ID: {UPI_ID}\n\n"
         "📷 QR Scan karke payment kare.\n"
-        "✅ Payment ke baad UTR number bheje."
-    )
-)
+                "✅ Payment ke baad UTR number bheje."
+        )
 
 elif data.startswith("approve|"):
-
-        user_id = int(data.split("|")[1])
+    user_id = int(data.split("|")[1])
 
     product = user_data.get(user_id, {}).get("product")
 
