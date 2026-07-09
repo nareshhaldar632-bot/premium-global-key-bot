@@ -171,10 +171,11 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
     )
 
-    await query.edit_message_text(
+     await query.edit_message_text(
         "✅ Payment Approved"
     )
-elif data.startswith("reject|"):
+
+   elif data.startswith("reject|"):
         user_id = int(data.split("|")[1])
 
         await context.bot.send_message(
