@@ -149,6 +149,43 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "✅ Payment ke baad UTR number bheje."
             )
         )
+async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    utr = update.message.text
+
+    info = user_data.get(user.id)
+
+    if not info:
+        return
+
+    keyboard = [[
+        InlineKeyboardButton(
+            "✅ Approve",
+            callback_data=f"approve|{user.id}"
+        ),
+        InlineKeyboardButton(
+            "❌ Reject",
+            callback_data=f"reject|{user.id}"
+        )
+    ]]
+
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            f"💳 New Payment\n\n"
+            f"👤 {user.first_name}\n"
+            f"🆔 {user.id}\n"
+            f"📦 {info['product']}\n"
+            f"⏳ {info['duration']}\n"
+            f"💰 ₹{info['amount']}\n"
+            f"UTR: {utr}"
+        ),
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+    await update.message.reply_text(
+        "✅ Payment submitted.\nPlease wait for admin approval."
+    )
 if __name__ == "__main__":
     create_tables()
 
@@ -156,6 +193,12 @@ if __name__ == "__main__":
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
+    app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        receive_utr
+    )
+    )
 
     print("Bot started...")
 
