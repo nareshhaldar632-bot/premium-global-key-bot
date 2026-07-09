@@ -1,4 +1,4 @@
-ADMIN_ID = 8882194695
+ADMIN_ID = 8469175911
 
 CHANNEL_URL = "https://t.me/primesupport_boi"
 
