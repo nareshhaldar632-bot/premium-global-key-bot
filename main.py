@@ -10,10 +10,15 @@ from telegram.ext import (
 )
 
 from config import CHANNEL_URL, UPI_ID, QR_IMAGE
-from database import create_tables, add_user
+from database import (
+    create_tables,
+    add_user,
+    add_order,
+)
 from products import PRODUCTS, DURATIONS
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+import uuid
 ADMIN_ID = 8469175911
 user_data = {}
 
@@ -121,6 +126,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         duration = duration.replace("_", " ")
 
         price = DURATIONS.get(duration, 0)
+        order_id = str(uuid.uuid4())[:8]
 
         product_name = product_id
 
@@ -129,10 +135,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 product_name = product["name"]
                 break
         user_data[query.from_user.id] = {
+    "order_id": order_id,
     "product": product_name,
-    "duration": duration
+    "duration": duration,
+    "amount": price
         }
-        await query.message.reply_photo(
+        add_order(
+    order_id,
+    query.from_user.id,
+    product_name,
+    duration,
+    price,
+    ""
+)
+
+await query.message.reply_photo(
             photo=open(QR_IMAGE, "rb"),
             caption=(
     "💳 Payment Details\n\n"
