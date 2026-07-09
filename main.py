@@ -22,7 +22,8 @@ from database import create_tables, add_user, add_order
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-ADMIN_ID = 8469175911
+ADMIN_ID = 845178511
+
 
 user_data = {}
 
@@ -53,63 +54,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_text(
-        "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
+        "🔥 Welcome to Nandu Global Key Store 🔥\n\nChoose an option:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
 
+
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     query = update.callback_query
     await query.answer()
 
     data = query.data
-
-    if data == "products":
+        if data == "products":
 
         keyboard = []
 
+
         for product in PRODUCTS:
-            keyboard.append([
-                InlineKeyboardButton(
-                    product["name"],
-                    callback_data=f"product_{product['id']}"
-                )
-            ])
-
-        keyboard.append([
-            InlineKeyboardButton(
-                "⬅️ Back",
-                callback_data="home"
-            )
-        ])
-
-        await query.edit_message_text(
-            "🛒 Select Product",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-
-
-    elif data == "home":
-
-        keyboard = [
-            [
-                InlineKeyboardButton(
-                    "🛒 Products",
-                    callback_data="products"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    "📢 Join Channel",
-                    url=CHANNEL_URL
-                )
-            ]
-        ]
-
-        await query.edit_message_text(
-            "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
 
             keyboard.append(
                 [
@@ -124,7 +86,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    "⬅ Back",
+                    "⬅️ Back",
                     callback_data="home"
                 )
             ]
@@ -132,39 +94,51 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         await query.edit_message_text(
-            "🛒 Select Product",
+            "🛒 Select Product:",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
-            elif data == "home":
+
+
+
+    elif data == "home":
 
         keyboard = [
+
             [
                 InlineKeyboardButton(
                     "🛒 Products",
                     callback_data="products"
                 )
             ],
+
             [
                 InlineKeyboardButton(
                     "📢 Join Channel",
                     url=CHANNEL_URL
                 )
             ]
+
         ]
 
 
         await query.edit_message_text(
-            "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
+
+            "🔥 Welcome to Nandu Global Key Store 🔥\n\nChoose an option:",
+
             reply_markup=InlineKeyboardMarkup(keyboard)
+
         )
 
 
+
     elif data.startswith("product_"):
+
 
         product_id = data.replace(
             "product_",
             ""
         )
+
 
         keyboard = []
 
@@ -176,29 +150,47 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "_"
             )
 
+
             keyboard.append(
+
                 [
+
                     InlineKeyboardButton(
+
                         f"{duration} - ₹{price}",
+
                         callback_data=f"buy|{product_id}|{callback_duration}"
+
                     )
+
                 ]
+
             )
 
 
         keyboard.append(
+
             [
+
                 InlineKeyboardButton(
-                    "⬅ Back",
+
+                    "⬅️ Back",
+
                     callback_data="products"
+
                 )
+
             ]
+
         )
 
 
         await query.edit_message_text(
-            "⏳ Select Duration",
+
+            "⏳ Select Duration:",
+
             reply_markup=InlineKeyboardMarkup(keyboard)
+
         )
 
 
@@ -206,93 +198,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("buy|"):
 
 
-        _, product_id, duration = data.split("|")
-
-
-        duration = duration.replace(
-            "_",
-            " "
-        )
-
-
-        price = DURATIONS.get(
-            duration,
-            0
-        )
-
-
-        order_id = str(uuid.uuid4())[:8]
-
-
-        product_name = product_id
-
-
-        for product in PRODUCTS:
-
-            if product["id"] == product_id:
-
-                product_name = product["name"]
-
-                break
-
-
-
-        user_data[query.from_user.id] = {
-
-            "order_id": order_id,
-
-            "product": product_name,
-
-            "duration": duration,
-
-            "amount": price
-
-        }
-
-
-
-        add_order(
-
-            order_id,
-
-            query.from_user.id,
-
-            product_name,
-
-            duration,
-
-            price,
-
-            ""
-
-        )
-
-
-
-        await query.message.reply_photo(
-
-            photo=open(QR_IMAGE, "rb"),
-
-            caption=(
-
-                "💳 Payment Details\n\n"
-
-                f"📦 Product: {product_name}\n"
-
-                f"⏳ Duration: {duration}\n"
-
-                f"💰 Price: ₹{price}\n"
-
-                f"🆔 UPI ID: {UPI_ID}\n\n"
-
-                "📷 QR Scan karke payment kare.\n"
-
-                "✅ Payment ke baad UTR number bheje."
-
-            )
-
-        )
-    elif data.startswith("approve|"):
+        _, product_id, duration
+            elif data.startswith("approve|"):
 
         user_id = int(
             data.split("|")[1]
@@ -311,7 +218,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         key = "No Key Available"
-
 
 
         if product in KEYS and KEYS[product]:
@@ -378,11 +284,9 @@ if __name__ == "__main__":
     create_tables()
 
 
-
     app = Application.builder().token(
         BOT_TOKEN
     ).build()
-
 
 
     app.add_handler(
@@ -394,15 +298,4 @@ if __name__ == "__main__":
 
 
     app.add_handler(
-        CallbackQueryHandler(
-            button
-        )
-    )
-
-
-    print(
-        "Bot Started..."
-    )
-
-
-    app.run_polling()
+        Callback
