@@ -152,30 +152,31 @@ await query.message.reply_photo(
     )
 )
 
-elif data.startswith("approve|"):
-    user_id = int(data.split("|")[1])
+    elif data.startswith("approve|"):
+        user_id = int(data.split("|")[1])
 
-    product = user_data.get(user_id, {}).get("product")
+        product = user_data.get(user_id, {}).get("product")
 
-    key = "No Key Available"
+        key = "No Key Available"
 
-    if product in KEYS and KEYS[product]:
-        key = KEYS[product].pop(0)
+        if product in KEYS and KEYS[product]:
+            key = KEYS[product].pop(0)
 
-    await context.bot.send_message(
-        chat_id=user_id,
-        text=(
-            "✅ Payment Approved!\n\n"
-            f"🔑 Your Key:\n{key}\n\n"
-            "Thank you for using Nandu Global Key Store."
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                "✅ Payment Approved!\n\n"
+                f"🔑 Your Key:\n{key}\n\n"
+                "Thank you for using Nandu Global Key Store."
+            )
         )
-    )
 
-    await query.edit_message_text(
-        "✅ Payment Approved"
-    )
+        await query.edit_message_text(
+            "✅ Payment Approved"
+        )
 
-  elif data.startswith("reject|"):
+
+    elif data.startswith("reject|"):
         user_id = int(data.split("|")[1])
 
         await context.bot.send_message(
@@ -189,7 +190,10 @@ elif data.startswith("approve|"):
         await query.edit_message_text(
             "❌ Payment Rejected"
         )
+
+
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     user = update.effective_user
     utr = update.message.text
 
@@ -226,18 +230,25 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "✅ Payment submitted.\nPlease wait for admin approval."
     )
+
+
 if __name__ == "__main__":
+
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button))
+
     app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        receive_utr
+        CallbackQueryHandler(button)
     )
+
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            receive_utr
+        )
     )
 
     print("Bot started...")
