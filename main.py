@@ -242,6 +242,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
+    
     utr = update.message.text
 
     if check_utr(utr):
