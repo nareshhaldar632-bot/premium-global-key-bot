@@ -119,7 +119,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
-
 elif data.startswith("product_"):
 
     product_id = data.replace(
