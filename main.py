@@ -151,7 +151,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "✅ Payment ke baad UTR number bheje."
             )
         )
-    elif data.startswith("approve|"):
+elif data.startswith("approve|"):
 
         user_id = int(data.split("|")[1])
 
@@ -175,7 +175,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✅ Payment Approved"
     )
 
-   elif data.startswith("reject|"):
+  elif data.startswith("reject|"):
         user_id = int(data.split("|")[1])
 
         await context.bot.send_message(
