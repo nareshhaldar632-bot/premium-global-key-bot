@@ -59,19 +59,57 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     query = update.callback_query
-
     await query.answer()
 
     data = query.data
-
 
     if data == "products":
 
         keyboard = []
 
         for product in PRODUCTS:
+            keyboard.append([
+                InlineKeyboardButton(
+                    product["name"],
+                    callback_data=f"product_{product['id']}"
+                )
+            ])
+
+        keyboard.append([
+            InlineKeyboardButton(
+                "⬅️ Back",
+                callback_data="home"
+            )
+        ])
+
+        await query.edit_message_text(
+            "🛒 Select Product",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+
+    elif data == "home":
+
+        keyboard = [
+            [
+                InlineKeyboardButton(
+                    "🛒 Products",
+                    callback_data="products"
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "📢 Join Channel",
+                    url=CHANNEL_URL
+                )
+            ]
+        ]
+
+        await query.edit_message_text(
+            "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
 
             keyboard.append(
                 [
