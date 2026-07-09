@@ -4,12 +4,18 @@ DB_NAME = "store.db"
 
 
 def connect():
-    return sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(
+        DB_NAME,
+        timeout=30,
+        check_same_thread=False
+    )
+    return conn
 
 
 def create_tables():
 
     conn = connect()
+    conn.execute("PRAGMA journal_mode=WAL")
     cur = conn.cursor()
 
     cur.execute("""
