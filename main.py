@@ -236,7 +236,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     elif data.startswith("buy|"):
-    elif data.startswith("buy|"):
         # buy वाला code
         pass
 
