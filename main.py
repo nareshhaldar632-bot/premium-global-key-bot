@@ -19,7 +19,7 @@ from telegram.ext import (
 from products import PRODUCTS, DURATIONS
 from keys import KEYS
 from config import CHANNEL_URL, UPI_ID, QR_IMAGE
-from database import create_tables, add_user, add_order
+from database import create_tables, add_user, add_order, check_utr
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
@@ -243,6 +243,11 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
     utr = update.message.text
+    if check_utr(utr):
+    await update.message.reply_text(
+        "❌ This UTR is already used."
+    )
+    return
 
     info = user_data.get(user.id)
 
