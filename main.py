@@ -53,10 +53,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_text(
-        "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+        "🔥 Welcome to Nandu Global Key
+Store\n\nChoose an option:",
 
+reply_markup=InlineKeyboardMarkup(key
+board)
+)
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
