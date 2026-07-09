@@ -120,49 +120,45 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-    elif data.startswith("product_"):
+elif data.startswith("product_"):
 
-        product_id = data.replace(
-            "product_",
-            ""
+    product_id = data.replace(
+        "product_",
+        ""
+    )
+
+    keyboard = []
+
+    for duration, price in DURATIONS.items():
+
+        callback_duration = duration.replace(
+            " ",
+            "_"
         )
-
-        keyboard = []
-                for duration, price in DURATIONS.items():
-
-            callback_duration = duration.replace(
-                " ",
-                "_"
-            )
-
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        f"{duration} - ₹{price}",
-                        callback_data=f"buy|{product_id}|{callback_duration}"
-                    )
-                ]
-            )
-
 
         keyboard.append(
             [
                 InlineKeyboardButton(
-                    "⬅ Back",
-                    callback_data="products"
+                    f"{duration} - ₹{price}",
+                    callback_data=f"buy|{product_id}|{callback_duration}"
                 )
             ]
         )
 
+    keyboard.append(
+        [
+            InlineKeyboardButton(
+                "⬅ Back",
+                callback_data="products"
+            )
+        ]
+    )
 
-        await query.edit_message_text(
-            "⏳ Select Duration",
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-
-
-
-    elif data.startswith("buy|"):
+    await query.edit_message_text(
+        "⏳ Select Duration",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+elif data.startswith("buy|"):
 
         _, product_id, duration = data.split("|")
 
