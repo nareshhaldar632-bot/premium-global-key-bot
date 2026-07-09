@@ -153,9 +153,11 @@ await query.message.reply_photo(
 )
 
     elif data.startswith("approve|"):
+    elif data.startswith("approve|"):
         user_id = int(data.split("|")[1])
 
-        product = user_data.get(user_id, {}).get("product")
+        info = user_data.get(user_id, {})
+        product = info.get("product")
 
         key = "No Key Available"
 
@@ -215,7 +217,7 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=ADMIN_ID,
         text=(
-            f"💳 New Payment\n\n"
+            "💳 New Payment\n\n"
             f"👤 {user.first_name}\n"
             f"🆔 {user.id}\n"
             f"📦 {info['product']}\n"
@@ -232,12 +234,14 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == "__main__":
+
     create_tables()
 
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
+
     app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
