@@ -101,19 +101,19 @@ def add_order(
 
 
     cur.execute("""
-    INSERT INTO orders
-    (order_id, user_id, product, duration, amount, utr, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-    """,
-    (
-        order_id,
-        user_id,
-        product,
-        duration,
-        amount,
-        utr,
-        "PENDING"
-    ))
+INSERT INTO orders
+(order_id, user_id, product, duration, amount, utr, status)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+""",
+(
+    order_id,
+    user_id,
+    product,
+    duration,
+    amount,
+    None if utr == "" else utr,
+    "PENDING"
+))
 
 
     conn.commit()
