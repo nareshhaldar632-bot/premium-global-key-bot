@@ -29,7 +29,6 @@ user_data = {}
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     user = update.effective_user
 
     add_user(
@@ -38,18 +37,31 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user.first_name
     )
 
+    try:
+        member = await context.bot.get_chat_member(
+            CHANNEL_USERNAME,
+            user.id
+        )
+
+        if member.status in ["left", "kicked"]:
+            keyboard = [[
+                InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)
+            ]]
+
+            await update.message.reply_text(
+                "❌ Please join our channel first.",
+                reply_markup=InlineKeyboardMarkup(keyboard)
+            )
+            return
+    except Exception:
+        pass
+
     keyboard = [
         [
-            InlineKeyboardButton(
-                "🛒 Products",
-                callback_data="products"
-            )
+            InlineKeyboardButton("🛒 Products", callback_data="products")
         ],
         [
-            InlineKeyboardButton(
-                "📢 Join Channel",
-                url=CHANNEL_URL
-            )
+            InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)
         ]
     ]
 
@@ -57,7 +69,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
-
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
