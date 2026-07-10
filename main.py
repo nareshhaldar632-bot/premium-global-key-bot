@@ -212,8 +212,13 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 await query.message.reply_photo(
     photo=open(QR_IMAGE, "rb"),
     caption=(
-        ...
-        "✅ Payment ke baad UTR number bheje."
+ "💳 Payment Details\n\n"
+f"📦 Product: {product_name}\n"
+f"⏳ Duration: {duration}\n"
+f"💰 Price: ₹{price}\n"
+f"🆔 UPI ID: {UPI_ID}\n\n"
+"📷 QR Scan karke payment kare.\n"
+"✅ Payment ke baad UTR number bheje.
     )
 )
     
