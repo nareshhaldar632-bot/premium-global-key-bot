@@ -16,8 +16,18 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "🛒 Products",
+                callback_data="products"
+            )
+        ]
+    ]
+
     await update.message.reply_text(
-        "✅ Bot is working!"
+        "🔥 Welcome to Premium Global Key Store",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
 
