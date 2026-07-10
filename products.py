@@ -9,7 +9,7 @@ PRODUCTS = [
     {"id": "reaper_x_pro", "name": "REAPER X PRO"},
     {"id": "fluorite", "name": "FLUORITE"},
     {"id": "hikari_mod", "name": "HIKARI MOD"},
-    {"id": "ios_cloud", "name": "IOS CLOUD"}
+    {"id": "ios_cloud", "name": "IOS CLOUD"},
 ]
 
 DURATIONS = {
@@ -18,5 +18,5 @@ DURATIONS = {
     "7 Days": 150,
     "10 Days": 190,
     "15 Days": 300,
-    "30 Days": 500
+    "30 Days": 500,
 }
