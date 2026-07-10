@@ -19,4 +19,15 @@ KEYS = {
         "PATO-KEY-002"
     ]
 
+    "APK MC PANEL": [
+    "APK-KEY-001",
+    "APK-KEY-002"
+
+    ],
+
+    "BR MOD": [
+    "BR-KEY-001",
+    "BR-KEY-002"
+
+    ],
 }
