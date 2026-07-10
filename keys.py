@@ -12,7 +12,7 @@ KEYS = {
 
     "DRIPCLIENT": [
         "KEY-005"
-    ]
+    ],
 
     "PATO TEAM": [
         "PATO-KEY-001",
