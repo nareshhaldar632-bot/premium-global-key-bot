@@ -1,193 +1,74 @@
 import sqlite3
-from keys import KEYS
 
 DB_NAME = "store.db"
 
-
-def connect():
-    conn = sqlite3.connect(
-        DB_NAME,
-        timeout=30,
-        check_same_thread=False
-    )
-    return conn
-
-
 def create_tables():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
 
-    conn = connect()
-    conn.execute("PRAGMA journal_mode=WAL")
-    cur = conn.cursor()
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS users(
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
         user_id INTEGER PRIMARY KEY,
         username TEXT,
         first_name TEXT
     )
     """)
 
-
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS orders(
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         order_id TEXT,
         user_id INTEGER,
         product TEXT,
         duration TEXT,
         amount INTEGER,
-        utr TEXT UNIQUE,
+        utr TEXT,
         status TEXT
     )
     """)
 
-
     conn.commit()
     conn.close()
-
 
 
 def add_user(user_id, username, first_name):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
 
-    conn = connect()
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        INSERT OR IGNORE INTO users
+    c.execute(
+        "INSERT OR REPLACE INTO users VALUES (?, ?, ?)",
         (user_id, username, first_name)
-        VALUES (?, ?, ?)
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def add_order(order_id, user_id, product, duration, amount, utr):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    c.execute(
+        """
+        INSERT INTO orders
+        (order_id, user_id, product, duration, amount, utr, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
-        (
-            user_id,
-            username,
-            first_name
-        )
+        (order_id, user_id, product, duration, amount, utr, "Pending")
     )
 
     conn.commit()
     conn.close()
-
-
-
-def check_utr(utr):
-
-    conn = connect()
-    cur = conn.cursor()
-
-    cur.execute(
-        "SELECT id FROM orders WHERE utr=?",
-        (utr,)
-    )
-
-    data = cur.fetchone()
-
-    conn.close()
-
-    return data is not None
-
-
-
-def add_order(
-    order_id,
-    user_id,
-    product,
-    duration,
-    amount,
-    utr
-):
-
-    conn = connect()
-    cur = conn.cursor()
-
-
-    cur.execute("""
-INSERT INTO orders
-(order_id, user_id, product, duration, amount, utr, status)
-VALUES (?, ?, ?, ?, ?, ?, ?)
-""",
-(
-    order_id,
-    user_id,
-    product,
-    duration,
-    amount,
-    None if utr == "" else utr,
-    "PENDING"
-))
-
-
-    conn.commit()
-    conn.close()
-
 
 
 def update_order_status(order_id, status):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
 
-    conn = connect()
-    cur = conn.cursor()
-
-
-    cur.execute(
-        """
-        UPDATE orders
-        SET status=?
-        WHERE order_id=?
-        """,
-        (
-            status,
-            order_id
-        )
+    c.execute(
+        "UPDATE orders SET status=? WHERE order_id=?",
+        (status, order_id)
     )
-
 
     conn.commit()
     conn.close()
-
-
-
-def get_order(order_id):
-
-    conn = connect()
-    cur = conn.cursor()
-
-
-    cur.execute(
-        """
-        SELECT *
-        FROM orders
-        WHERE order_id=?
-        """,
-        (order_id,)
-    )
-
-
-    data = cur.fetchone()
-
-    conn.close()
-
-    return data
-def get_key(product):
-    if product not in KEYS:
-        return None
-
-    if len(KEYS[product]) == 0:
-        return None
-
-    return KEYS[product].pop(0)
-
-
-def add_key(product, key):
-    if product not in KEYS:
-        KEYS[product] = []
-
-    KEYS[product].append(key)
-
-
-def get_stock():
-    stock = {}
-
-    for product in KEYS:
-        stock[product] = len(KEYS[product])
-
-    return stock
