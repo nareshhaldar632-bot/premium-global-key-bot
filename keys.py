@@ -1,5 +1,4 @@
 KEYS = {
-
     "APK MC PANEL": [
         "APK-KEY-001",
         "APK-KEY-002"
@@ -54,5 +53,4 @@ KEYS = {
         "IOS-KEY-001",
         "IOS-KEY-002"
     ]
-
 }
