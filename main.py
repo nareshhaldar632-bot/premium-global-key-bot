@@ -263,7 +263,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "❌ Payment Rejected"
         )
 
-
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
@@ -290,12 +289,12 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=ADMIN_ID,
         text=(
-            "💳 New Payment\n\n"
+            "🧾 New Payment\n\n"
             f"👤 User: {user.first_name}\n"
             f"🆔 ID: {user.id}\n"
             f"📦 Product: {info['product']}\n"
             f"⏳ Duration: {info['duration']}\n"
-            f"💰 Amount: ₹{info['amount']}\n"
+            f"💰 Amount: {info['amount']}\n"
             f"🔢 UTR: {utr}"
         ),
         reply_markup=InlineKeyboardMarkup(keyboard)
@@ -313,6 +312,7 @@ if __name__ == "__main__":
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("admin", admin))
     app.add_handler(CallbackQueryHandler(button))
     app.add_handler(
         MessageHandler(
