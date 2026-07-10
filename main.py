@@ -16,6 +16,19 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "products":
+        await query.edit_message_text(
+            "🛒 Products List\n\n"
+            "• APK MC PANEL\n"
+            "• BR MOD\n"
+            "• DRIPCLIENT\n"
+            "• KOS\n"
+            "• NEO STRIKE"
+        )
     keyboard = [
         [
             InlineKeyboardButton(
