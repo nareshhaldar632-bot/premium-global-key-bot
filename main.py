@@ -326,6 +326,6 @@ app.add_handler(
         )
     )
 
-        print("Bot Started...")
+    print("Bot Started...")
 
-        app.run_polling()
+    app.run_polling()
