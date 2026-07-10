@@ -245,30 +245,31 @@ else:
         chat_id=user_id,
         text=(
             "✅ Payment Approved!\n\n"
-            f"🔑 Your Key: {key}\n\n"
+            f"🔑 Your Key:\n{key}\n\n"
             "Thank you for using Nandu Global Key Store."
         )
     )
 
-await query.edit_message_text(
-    "✅ Payment Approved"
-)
+    await query.edit_message_text(
+        "✅ Payment Approved"
+    )
 
-    elif data.startswith("reject|"):
 
-        user_id = int(data.split("|")[1])
+elif data.startswith("reject|"):
 
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=(
-                "❌ Payment Rejected.\n\n"
-                "Please contact admin."
-            )
+    user_id = int(data.split("|")[1])
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=(
+            "❌ Payment Rejected.\n\n"
+            "Please contact admin."
         )
+    )
 
-        await query.edit_message_text(
-            "❌ Payment Rejected"
-        )
+    await query.edit_message_text(
+        "❌ Payment Rejected"
+    )
 
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
