@@ -19,7 +19,15 @@ from telegram.ext import (
 from products import PRODUCTS, DURATIONS
 from keys import KEYS
 from config import CHANNEL_URL, UPI_ID, QR_IMAGE
-from database import create_tables, add_user, add_order, check_utr
+from database import (
+    create_tables,
+    add_user,
+    add_order,
+    check_utr,
+    get_stock,
+    add_key,
+    get_key
+)
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
