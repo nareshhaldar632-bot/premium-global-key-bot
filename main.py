@@ -4,9 +4,8 @@ import uuid
 from telegram import (
     Update,
     InlineKeyboardButton,
-    InlineKeyboardMarkup
+    InlineKeyboardMarkup,
 )
-from telegram import BotCommand
 
 from telegram.ext import (
     Application,
@@ -14,58 +13,26 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler,
     ContextTypes,
-    filters
+    filters,
 )
 
+from config import *
 from products import PRODUCTS, DURATIONS
-from keys import KEYS
-from config import CHANNEL_URL, CHANNEL_USERNAME, UPI_ID, QR_IMAGE
-from database import (
-    create_tables,
-    add_user,
-    add_order,
-    check_utr,
-    get_stock,
-    add_key,
-    get_key
-)
+from database import *
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-ADMIN_ID = 8469175911
-
-ADMIN_STATE = {}
-
 user_data = {}
 
-
+create_tables()
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
 
     add_user(
         user.id,
-        user.username,
-        user.first_name
+        user.username or "",
+        user.first_name or ""
     )
-
-    try:
-        member = await context.bot.get_chat_member(
-            CHANNEL_USERNAME,
-            user.id
-        )
-
-        if member.status in ["left", "kicked"]:
-            keyboard = [[
-                InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)
-            ]]
-
-            await update.message.reply_text(
-                "❌ Please join our channel first.",
-                reply_markup=InlineKeyboardMarkup(keyboard)
-            )
-            return
-    except Exception:
-        pass
 
     keyboard = [
         [
@@ -76,169 +43,96 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
     ]
 
-    await update.message.reply_text(
-        "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
-        reply_markup=InlineKeyboardMarkup(keyboard)
+    text = (
+        "🔥 *Welcome to Premium Global Key Store*\n\n"
+        "👇 Buy your product from the menu below."
     )
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        text,
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        parse_mode="Markdown"
+    )
 
+
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    
-    try:
-        await query.answer()
-    except Exception:
-        pass
+    await query.answer()
 
     data = query.data
 
     if data == "products":
-
         keyboard = []
 
         for product in PRODUCTS:
-
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        product["name"],
-                        callback_data=f"product_{product['id']}"
-                    )
-                ]
-            )
-
-        keyboard.append(
-            [
+            keyboard.append([
                 InlineKeyboardButton(
-                    "⬅ Back",
-                    callback_data="home"
+                    product["name"],
+                    callback_data=f'product|{product["id"]}'
                 )
-            ]
-        )
+            ])
+
+        keyboard.append([
+            InlineKeyboardButton("⬅ Back", callback_data="back")
+        ])
 
         await query.edit_message_text(
-            "🛒 Select Product",
+            "🛍 Select Product",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
-    elif data == "home":
-
+    elif data == "back":
         keyboard = [
             [
-                InlineKeyboardButton(
-                    "🛒 Products",
-                    callback_data="products"
-                )
+                InlineKeyboardButton("🛒 Products", callback_data="products")
             ],
             [
-                InlineKeyboardButton(
-                    "📢 Join Channel",
-                    url=CHANNEL_URL
-                )
+                InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)
             ]
         ]
 
         await query.edit_message_text(
-            "🔥 Welcome to Nandu Global Key Store\n\nChoose an option:",
+            "🔥 Welcome!",
             reply_markup=InlineKeyboardMarkup(keyboard)
-                )
-    elif data.startswith("product_"):
+        )
+    elif data.startswith("product|"):
 
-        product_id = data.replace("product_", "")
+        product_id = data.split("|")[1]
 
         keyboard = []
 
         for duration, price in DURATIONS.items():
-
             callback_duration = duration.replace(" ", "_")
 
-            keyboard.append(
-                [
-                    InlineKeyboardButton(
-                        f"{duration} - ₹{price}",
-                        callback_data=f"buy|{product_id}|{callback_duration}"
-                    )
-                ]
-            )
-
-        keyboard.append(
-            [
+            keyboard.append([
                 InlineKeyboardButton(
-                    "⬅ Back",
-                    callback_data="products"
+                    f"{duration} - ₹{price}",
+                    callback_data=f"buy|{product_id}|{callback_duration}"
                 )
-            ]
-        )
+            ])
+
+        keyboard.append([
+            InlineKeyboardButton("⬅ Back", callback_data="products")
+        ])
 
         await query.edit_message_text(
             "⏳ Select Duration",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
-
     elif data.startswith("buy|"):
 
         _, product_id, duration = data.split("|")
-
         duration = duration.replace("_", " ")
 
-        price = DURATIONS.get(duration, 0)
-
-        order_id = str(uuid.uuid4())[:8]
+        price = DURATIONS[duration]
 
         product_name = product_id
 
         for product in PRODUCTS:
             if product["id"] == product_id:
-                product_name = product["name"]
-                break
-
-        user_data[query.from_user.id] = {
-            "order_id": order_id,
-            "product": product_name,
-            "duration": duration,
-            "amount": price
-        }
-
-        add_order(
-            order_id,
-            query.from_user.id,
-            product_name,
-            duration,
-            price,
-            ""
-        )
-
-        await query.message.reply_photo(
-            photo=open(QR_IMAGE, "rb"),
-            caption=(
-                "💳 Payment Details\n\n"
-                f"📦 Product: {product_name}\n"
-                f"⏳ Duration: {duration}\n"
-                f"💰 Price: ₹{price}\n"
-                f"🆔 UPI ID: {UPI_ID}\n\n"
-                "📷 QR Scan karke payment kare.\n"
-                "✅ Payment ke baad UTR number bheje."
-            )
-        )
-elif data.startswith("reject|"):
-
-    user_id = int(data.split("|")[1])
-
-    await context.bot.send_message(
-        chat_id=user_id,
-        text=(
-            "❌ Payment Rejected.\n\n"
-            "Please contact admin."
-        )
-    )
-
-    await query.edit_message_text(
-        "❌ Payment Rejected"
-    )
-
+                product_name = product["name
 async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
     user = update.effective_user
     utr = update.message.text
 
@@ -256,49 +150,36 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton(
                 "❌ Reject",
                 callback_data=f"reject|{user.id}"
-            )
+            ),
         ]
     ]
 
     await context.bot.send_message(
         chat_id=ADMIN_ID,
         text=(
-            "🧾 New Payment\n\n"
+            f"🆕 New Order\n\n"
             f"👤 User: {user.first_name}\n"
-            f"🆔 ID: {user.id}\n"
+            f"🆔 User ID: {user.id}\n"
             f"📦 Product: {info['product']}\n"
             f"⏳ Duration: {info['duration']}\n"
-            f"💰 Amount: {info['amount']}\n"
+            f"💰 Amount: ₹{info['amount']}\n"
             f"🔢 UTR: {utr}"
         ),
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
     await update.message.reply_text(
-        "✅ Payment submitted.\nPlease wait for approval."
+        "✅ UTR received.\nPlease wait for admin approval."
     )
 
-async def set_menu(app):
-    await app.bot.set_my_commands([
-        BotCommand("start", "Start Bot"),
-        BotCommand("products", "View Products"),
-        BotCommand("help", "Help")
-    ])
 
-if __name__ == "__main__":
+app = Application.builder().token(BOT_TOKEN).build()
 
-    create_tables()
-
-app = Application.builder().token(BOT_TOKEN).post_init(set_menu).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
 app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        receive_utr
-    )
+    MessageHandler(filters.TEXT & ~filters.COMMAND, receive_utr)
 )
 
-print("Bot Started....")
-
+print("Bot Started...")
 app.run_polling()
