@@ -1,6 +1,7 @@
 ADMIN_ID = 8469175911
 
 CHANNEL_URL = "https://t.me/primesupport_boi"
+CHANNEL_USERNAME = "@primesupport_boi"
 
 UPI_ID = "7425974582@ibl"
 
