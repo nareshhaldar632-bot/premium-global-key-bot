@@ -250,9 +250,9 @@ else:
         )
     )
 
-    await query.edit_message_text(
-        "✅ Payment Approved"
-    )
+await query.edit_message_text(
+    "✅ Payment Approved"
+)
 
 
 elif data.startswith("reject|"):
