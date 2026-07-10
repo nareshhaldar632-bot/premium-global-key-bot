@@ -1,17 +1,13 @@
-ADMIN_ID = 8469175911
+import os
 
-CHANNEL_URL = "https://t.me/primesupport_boi"
-CHANNEL_USERNAME = "@primesupport_boi"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-UPI_ID = "7425974582@ibl"
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
+
+CHANNEL_URL = "https://t.me/YOUR_CHANNEL"
+
+CHANNEL_USERNAME = "@YOUR_CHANNEL"
+
+UPI_ID = "yourupi@upi"
 
 QR_IMAGE = "qr.jpg"
-
-PRICES = {
-    "1 Day": 60,
-    "3 Days": 100,
-    "7 Days": 150,
-    "10 Days": 190,
-    "15 Days": 300,
-    "30 Days": 500,
-}
