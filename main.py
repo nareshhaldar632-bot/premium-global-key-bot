@@ -6,6 +6,7 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
+from telegram import BotCommand
 
 from telegram.ext import (
     Application,
@@ -304,12 +305,18 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✅ Payment submitted.\nPlease wait for approval."
     )
 
+async def set_menu(app):
+    await app.bot.set_my_commands([
+        BotCommand("start", "Start Bot"),
+        BotCommand("products", "View Products"),
+        BotCommand("help", "Help")
+    ])
 
 if __name__ == "__main__":
 
     create_tables()
 
-    app = Application.builder().token(BOT_TOKEN).build()
+app = Application.builder().token(BOT_TOKEN).post_init(set_menu).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
