@@ -317,10 +317,9 @@ if __name__ == "__main__":
     create_tables()
 
 app = Application.builder().token(BOT_TOKEN).post_init(set_menu).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button))
-    app.add_handler(
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CallbackQueryHandler(button))
+app.add_handler(
         MessageHandler(
             filters.TEXT & ~filters.COMMAND,
             receive_utr
