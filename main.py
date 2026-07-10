@@ -33,6 +33,8 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 ADMIN_ID = 8469175911
 
+ADMIN_STATE = {}
+
 user_data = {}
 
 
