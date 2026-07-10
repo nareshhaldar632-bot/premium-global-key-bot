@@ -1,4 +1,5 @@
 import sqlite3
+from keys import KEYS
 
 DB_NAME = "store.db"
 
@@ -166,3 +167,27 @@ def get_order(order_id):
     conn.close()
 
     return data
+def get_key(product):
+    if product not in KEYS:
+        return None
+
+    if len(KEYS[product]) == 0:
+        return None
+
+    return KEYS[product].pop(0)
+
+
+def add_key(product, key):
+    if product not in KEYS:
+        KEYS[product] = []
+
+    KEYS[product].append(key)
+
+
+def get_stock():
+    stock = {}
+
+    for product in KEYS:
+        stock[product] = len(KEYS[product])
+
+    return stock
