@@ -14,4 +14,7 @@ KEYS = {
         "KEY-005"
     ]
 
-}
+    "PATO TEAM": [
+    "PATO-KEY-001",
+    "PATO-KEY-002"
+],
