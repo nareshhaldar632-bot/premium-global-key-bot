@@ -237,21 +237,22 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if key == "No Key Available":
     await context.bot.send_message(
         chat_id=user_id,
-        text="❌ Stock खत्म है। Admin से contact करें."
+        text="❌ Stock khatam hai Admin se contact kare."
     )
+
 else:
     await context.bot.send_message(
         chat_id=user_id,
         text=(
             "✅ Payment Approved!\n\n"
-            f"🔑 Your Key:\n{key}\n\n"
+            f"🔑 Your Key: {key}\n\n"
             "Thank you for using Nandu Global Key Store."
         )
     )
-        await query.edit_message_text(
-            "✅ Payment Approved"
-        )
 
+await query.edit_message_text(
+    "✅ Payment Approved"
+)
 
     elif data.startswith("reject|"):
 
