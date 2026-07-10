@@ -1,12 +1,17 @@
 KEYS = {
-    "IOS CLOUD": [
-        "IOS-KEY-001",
-        "IOS-KEY-002",
-        "IOS-KEY-003"
-    ],
 
     "APK MC PANEL": [
-        "APK-KEY-001",
-        "APK-KEY-002"
+        "KEY-001",
+        "KEY-002"
+    ],
+
+    "BR MOD": [
+        "KEY-003",
+        "KEY-004"
+    ],
+
+    "DRIPCLIENT": [
+        "KEY-005"
     ]
+
 }
