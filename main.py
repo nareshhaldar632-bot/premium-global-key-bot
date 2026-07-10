@@ -220,41 +220,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "📷 QR Scan karke payment kare.\n"
                 "✅ Payment ke baad UTR number bheje."
             )
-        )
-    elif data.startswith("approve|"):
-
-        user_id = int(data.split("|")[1])
-
-        info = user_data.get(user_id, {})
-
-        product = info.get("product")
-
-        key = "No Key Available"
-
-        if product in KEYS and KEYS[product]:
-            key = KEYS[product].pop(0)
-
-if key == "No Key Available":
-    await context.bot.send_message(
-        chat_id=user_id,
-        text="❌ Stock khatam hai Admin se contact kare."
-    )
-
-else:
-    await context.bot.send_message(
-        chat_id=user_id,
-        text=(
-            "✅ Payment Approved!\n\n"
-            f"🔑 Your Key:\n{key}\n\n"
-            "Thank you for using Nandu Global Key Store."
-        )
-    )
-
-await query.edit_message_text(
-    "✅ Payment Approved"
-)
-
-
+    
 elif data.startswith("reject|"):
 
     user_id = int(data.split("|")[1])
