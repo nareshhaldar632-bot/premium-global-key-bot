@@ -320,12 +320,12 @@ app = Application.builder().token(BOT_TOKEN).post_init(set_menu).build()
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
 app.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            receive_utr
-        )
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        receive_utr
     )
+)
 
-    print("Bot Started...")
+print("Bot Started....")
 
-    app.run_polling()
+app.run_polling()
