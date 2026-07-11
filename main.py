@@ -52,6 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     query = update.callback_query
@@ -82,38 +83,15 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif query.data.startswith("product_"):
 
-        product_id = query.data.replace("product_", "")
-
-        user_orders[query.from_user.id] = {
-            "product": product_id
-        }
-
-
-        buttons = []
-
-        for duration, price in DURATIONS.items():
-
-            buttons.append(
-                [
-                    InlineKeyboardButton(
-                        f"{duration} - ₹{price}",
-                        callback_data=f"buy_{duration}"
-                    )
-                ]
-            )
-
-
-        await query.edit_message_text(
-            "Select Duration:",
-            reply_markup=InlineKeyboardMarkup(buttons)
+        product_id = query.data.replace(
+            "product_",
+            ""
         )
-    elif query.data.startswith("product_"):
-
-        product_id = query.data.replace("product_", "")
 
         user_orders[query.from_user.id] = {
             "product": product_id
         }
+
 
         buttons = []
 
@@ -127,23 +105,31 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                 ]
             )
+
 
         await query.edit_message_text(
             "⏳ Select Duration:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
+        elif query.data.startswith("buy_"):
+
+        duration = query.data.replace(
+            "buy_",
+            ""
+        )
 
 
-    elif query.data.startswith("buy_"):
+        data = user_orders.get(
+            query.from_user.id
+        )
 
-        duration = query.data.replace("buy_", "")
-
-        data = user_orders.get(query.from_user.id)
 
         if not data:
+
             await query.message.reply_text(
                 "❌ Please select product again."
             )
+
             return
 
 
@@ -165,9 +151,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
+
+
 async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
+
 
     if user.id not in user_orders:
         return
@@ -231,16 +220,15 @@ async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def admin_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     query = update.callback_query
-
     await query.answer()
 
 
+    parts = query.data.split("_")
+
+    user_id = int(parts[2])
+
+
     if query.data.startswith("approve_"):
-
-        parts = query.data.split("_")
-
-        user_id = int(parts[2])
-
 
         await query.message.reply_text(
             "✅ Order Approved"
@@ -254,11 +242,6 @@ async def admin_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     elif query.data.startswith("reject_"):
-
-        parts = query.data.split("_")
-
-        user_id = int(parts[2])
-
 
         await query.message.reply_text(
             "❌ Order Rejected"
