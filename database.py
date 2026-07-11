@@ -72,3 +72,19 @@ def update_order_status(order_id, status):
 
     conn.commit()
     conn.close()
+
+def update_order_status(order_id, status):
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    c.execute(
+        """
+        UPDATE orders
+        SET status=?
+        WHERE order_id=?
+        """,
+        (status, order_id)
+    )
+
+    conn.commit()
+    conn.close()
