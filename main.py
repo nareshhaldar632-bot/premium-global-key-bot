@@ -18,7 +18,6 @@ from products import PRODUCTS, DURATIONS
 
 logging.basicConfig(level=logging.INFO)
 
-
 user_orders = {}
 
 
@@ -59,25 +58,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
 
-    if query.data.startswith("approve_"):
-
-        await query.message.reply_text(
-            "✅ Order Approved"
-        )
-
-        return
-
-
-    elif query.data.startswith("reject_"):
-
-        await query.message.reply_text(
-            "❌ Order Rejected"
-        )
-
-        return
-
-
-    elif query.data == "products":
+    if query.data == "products":
 
         buttons = []
 
@@ -101,11 +82,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif query.data.startswith("product_"):
 
-        product_id = query.data.replace(
-            "product_",
-            ""
-        )
-
+        product_id = query.data.replace("product_", "")
 
         user_orders[query.from_user.id] = {
             "product": product_id
@@ -113,7 +90,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         buttons = []
-
 
         for duration, price in DURATIONS.items():
 
@@ -128,126 +104,18 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         await query.edit_message_text(
-            "📅 Select Duration:",
+            "Select Duration:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
-
-
-    elif query.data.startswith("buy_"):
-
-        duration = query.data.replace(
-            "buy_",
-            ""
-        )
-
-
-        data = user_orders.get(
-            query.from_user.id
-        )
-
-
-        if not data:
-
-            await query.message.reply_text(
-                "Please select product again."
-            )
-
-            return
-
-
-        data["duration"] = duration
-        data["amount"] = DURATIONS[duration]
-
-
-        user_orders[query.from_user.id] = data
-
-    async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    query = update.callback_query
-    await query.answer()
-
-    if query.data.startswith("approve_"):
-
-        data = query.data.split("_")
-
-        order_id = data[1]
-        user_id = int(data[2])
-
-        await query.message.reply_text(
-            "✅ Order Approved"
-        )
-
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=(
-                "✅ Your Order Approved\n\n"
-                f"Order ID: {order_id}\n"
-                "Thank you ❤️"
-            )
-        )
-
-        return
-
-
-    elif query.data.startswith("reject_"):
-
-        data = query.data.split("_")
-
-        order_id = data[1]
-        user_id = int(data[2])
-
-        await query.message.reply_text(
-            "❌ Order Rejected"
-        )
-
-        await context.bot.send_message(
-            chat_id=user_id,
-            text=(
-                "❌ Your Order Rejected\n\n"
-                f"Order ID: {order_id}"
-            )
-        )
-
-        return
-
-
-    elif query.data == "products":
-
-        buttons = []
-
-        for product in PRODUCTS:
-
-            buttons.append(
-                [
-                    InlineKeyboardButton(
-                        product["name"],
-                        callback_data=f"product_{product['id']}"
-                    )
-                ]
-            )
-
-
-        await query.edit_message_text(
-            "🛒 Select Product:",
-            reply_markup=InlineKeyboardMarkup(buttons)
-        )
-
-
     elif query.data.startswith("product_"):
 
-        product_id = query.data.replace(
-            "product_",
-            ""
-        )
-
+        product_id = query.data.replace("product_", "")
 
         user_orders[query.from_user.id] = {
             "product": product_id
         }
 
-
         buttons = []
-
 
         for duration, price in DURATIONS.items():
 
@@ -259,37 +127,28 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     )
                 ]
             )
-
 
         await query.edit_message_text(
             "⏳ Select Duration:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
 
-        elif query.data.startswith("buy_"):
 
-        duration = query.data.replace(
-            "buy_",
-            ""
-        )
+    elif query.data.startswith("buy_"):
 
-        data = user_orders.get(
-            query.from_user.id
-        )
+        duration = query.data.replace("buy_", "")
 
+        data = user_orders.get(query.from_user.id)
 
         if not data:
-
             await query.message.reply_text(
-                "Please select product again."
+                "❌ Please select product again."
             )
-
             return
 
 
         data["duration"] = duration
         data["amount"] = DURATIONS[duration]
-
 
         user_orders[query.from_user.id] = data
 
@@ -306,19 +165,15 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
-
-
 async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
-
 
     if user.id not in user_orders:
         return
 
 
     utr = update.message.text
-
 
     data = user_orders[user.id]
 
@@ -349,7 +204,6 @@ async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "✅ Approve",
                 callback_data=f"approve_{order_id}_{user.id}"
             ),
-
             InlineKeyboardButton(
                 "❌ Reject",
                 callback_data=f"reject_{order_id}_{user.id}"
@@ -374,6 +228,50 @@ async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 
+async def admin_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+
+    if query.data.startswith("approve_"):
+
+        parts = query.data.split("_")
+
+        user_id = int(parts[2])
+
+
+        await query.message.reply_text(
+            "✅ Order Approved"
+        )
+
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="✅ आपका Order Approved हो गया है."
+        )
+
+
+    elif query.data.startswith("reject_"):
+
+        parts = query.data.split("_")
+
+        user_id = int(parts[2])
+
+
+        await query.message.reply_text(
+            "❌ Order Rejected"
+        )
+
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="❌ आपका Order Reject हो गया है."
+        )
+
+
+
 def main():
 
     create_tables()
@@ -392,6 +290,11 @@ def main():
 
     app.add_handler(
         CallbackQueryHandler(button)
+    )
+
+
+    app.add_handler(
+        CallbackQueryHandler(admin_button)
     )
 
 
