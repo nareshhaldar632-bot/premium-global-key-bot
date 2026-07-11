@@ -117,7 +117,35 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 ]
             )
 
-        await query.edit_message_text(
-            "⏳ Select Duration:",
-            reply_markup=InlineKeyboardMarkup(buttons)
+async def admin_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+    await query.answer()
+
+    parts = query.data.split("_")
+
+    order_id = parts[1]
+    user_id = int(parts[2])
+
+    if query.data.startswith("approve_"):
+
+        await query.message.reply_text(
+            "✅ Order Approved"
+        )
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="✅ Aapka Order Approved ho gaya hai."
+        )
+
+
+    elif query.data.startswith("reject_"):
+
+        await query.message.reply_text(
+            "❌ Order Rejected"
+        )
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="❌ Aapka Order Reject ho gaya hai."
         )
