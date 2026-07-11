@@ -18,6 +18,7 @@ from products import PRODUCTS, DURATIONS
 
 logging.basicConfig(level=logging.INFO)
 
+
 user_orders = {}
 
 
@@ -63,6 +64,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(
             "✅ Order Approved"
         )
+
         return
 
 
@@ -71,6 +73,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(
             "❌ Order Rejected"
         )
+
         return
 
 
@@ -103,6 +106,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             ""
         )
 
+
         user_orders[query.from_user.id] = {
             "product": product_id
         }
@@ -124,10 +128,40 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         await query.edit_message_text(
-            "⏳ Select Duration:",
+            "📅 Select Duration:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+
+    elif query.data.startswith("buy_"):
+
+        duration = query.data.replace(
+            "buy_",
+            ""
+        )
+
+
+        data = user_orders.get(
+            query.from_user.id
+        )
+
+
+        if not data:
+
+            await query.message.reply_text(
+                "Please select product again."
+            )
+
+            return
+
+
+        data["duration"] = duration
+        data["amount"] = DURATIONS[duration]
+
+
+        user_orders[query.from_user.id] = data
+
+    async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     query = update.callback_query
     await query.answer()
@@ -231,6 +265,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "⏳ Select Duration:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
+
         elif query.data.startswith("buy_"):
 
         duration = query.data.replace(
