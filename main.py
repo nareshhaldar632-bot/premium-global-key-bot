@@ -32,8 +32,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     keyboard = [
-        [InlineKeyboardButton("🛒 Products", callback_data="products")],
-        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)]
+        [
+            InlineKeyboardButton(
+                "🛒 Products",
+                callback_data="products"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Join Channel",
+                url=CHANNEL_URL
+            )
+        ]
     ]
 
     await update.message.reply_text(
@@ -49,6 +59,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     if query.data.startswith("approve_"):
+
         await query.message.reply_text(
             "✅ Order Approved"
         )
@@ -56,6 +67,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     elif query.data.startswith("reject_"):
+
         await query.message.reply_text(
             "❌ Order Rejected"
         )
@@ -67,6 +79,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         buttons = []
 
         for product in PRODUCTS:
+
             buttons.append(
                 [
                     InlineKeyboardButton(
@@ -85,7 +98,10 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif query.data.startswith("product_"):
 
-        product_id = query.data.replace("product_", "")
+        product_id = query.data.replace(
+            "product_",
+            ""
+        )
 
         user_orders[query.from_user.id] = {
             "product": product_id
@@ -93,6 +109,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         buttons = []
+
 
         for duration, price in DURATIONS.items():
 
@@ -107,17 +124,123 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
         await query.edit_message_text(
-            "Select Duration:",
+            "⏳ Select Duration:",
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+    await query.answer()
+
+    if query.data.startswith("approve_"):
+
+        data = query.data.split("_")
+
+        order_id = data[1]
+        user_id = int(data[2])
+
+        await query.message.reply_text(
+            "✅ Order Approved"
+        )
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                "✅ Your Order Approved\n\n"
+                f"Order ID: {order_id}\n"
+                "Thank you ❤️"
+            )
+        )
+
+        return
+
+
+    elif query.data.startswith("reject_"):
+
+        data = query.data.split("_")
+
+        order_id = data[1]
+        user_id = int(data[2])
+
+        await query.message.reply_text(
+            "❌ Order Rejected"
+        )
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                "❌ Your Order Rejected\n\n"
+                f"Order ID: {order_id}"
+            )
+        )
+
+        return
+
+
+    elif query.data == "products":
+
+        buttons = []
+
+        for product in PRODUCTS:
+
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        product["name"],
+                        callback_data=f"product_{product['id']}"
+                    )
+                ]
+            )
+
+
+        await query.edit_message_text(
+            "🛒 Select Product:",
             reply_markup=InlineKeyboardMarkup(buttons)
         )
 
 
-    elif query.data.startswith("buy_"):
+    elif query.data.startswith("product_"):
 
-        duration = query.data.replace("buy_", "")
+        product_id = query.data.replace(
+            "product_",
+            ""
+        )
 
 
-        data = user_orders.get(query.from_user.id)
+        user_orders[query.from_user.id] = {
+            "product": product_id
+        }
+
+
+        buttons = []
+
+
+        for duration, price in DURATIONS.items():
+
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        f"{duration} - ₹{price}",
+                        callback_data=f"buy_{duration}"
+                    )
+                ]
+            )
+
+
+        await query.edit_message_text(
+            "⏳ Select Duration:",
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
+        elif query.data.startswith("buy_"):
+
+        duration = query.data.replace(
+            "buy_",
+            ""
+        )
+
+        data = user_orders.get(
+            query.from_user.id
+        )
 
 
         if not data:
@@ -139,7 +262,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_photo(
             photo=QR_IMAGE,
             caption=(
-                f"💳 Payment Details\n\n"
+                "💳 Payment Details\n\n"
                 f"Product: {data['product']}\n"
                 f"Duration: {duration}\n"
                 f"Amount: ₹{data['amount']}\n\n"
@@ -147,6 +270,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 "Payment ke baad UTR number bheje."
             )
         )
+
 
 
 async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -178,9 +302,9 @@ async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     await update.message.reply_text(
-        f"✅ Order Submitted\n\n"
+        "✅ Order Submitted\n\n"
         f"Order ID: {order_id}\n"
-        f"Status: Pending"
+        "Status: Pending"
     )
 
 
@@ -202,7 +326,7 @@ async def utr_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=ADMIN_ID,
         text=(
-            f"🔔 New Order\n\n"
+            "🔔 New Order\n\n"
             f"Order ID: {order_id}\n"
             f"User: {user.id}\n"
             f"Product: {data['product']}\n"
