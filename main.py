@@ -247,8 +247,8 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 application = Application.builder().token(BOT_TOKEN).build()
 
-application.add_handler(CommandHandler("start", start))
-application.add_handler(CallbackQueryHandler(button))
-application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, receive_utr))
+application.add_handler(CallbackQueryHandler(products_menu, pattern="^products$"))
+application.add_handler(CallbackQueryHandler(product_selected, pattern="^product\\|"))
+application.add_handler(CallbackQueryHandler(duration_selected, pattern="^duration\\|"))
 
 application.run_polling()
