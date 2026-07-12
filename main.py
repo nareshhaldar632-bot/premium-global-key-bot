@@ -183,3 +183,18 @@ async def duration_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✍️ Ab apna UTR Number send karo."
     )
 
+...
+await query.message.reply_text(
+    "✍️ Ab apna UTR Number send karo."
+)
+
+app = Application.builder().token(BOT_TOKEN).build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CallbackQueryHandler(products_menu, pattern="^products$"))
+app.add_handler(CallbackQueryHandler(product_selected, pattern="^product_"))
+app.add_handler(CallbackQueryHandler(duration_selected, pattern="^duration_"))
+
+print("Bot Running...")
+
+app.run_polling()
