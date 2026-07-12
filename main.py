@@ -208,8 +208,7 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
         utr
     )
 
-        admin_bot =
-Bot(token=ADMIN_BOT_TOKEN)
+    admin_bot = Bot(token=ADMIN_BOT_TOKEN)
 
     await admin_bot.send_message(
         chat_id=ADMIN_ID,
