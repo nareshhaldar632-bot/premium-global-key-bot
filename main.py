@@ -1,31 +1,122 @@
+import uuid
+import logging
+
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
 from telegram.ext import (
     Application,
     CommandHandler,
     CallbackQueryHandler,
     MessageHandler,
+    ContextTypes,
     filters,
 )
 
-from config import BOT_TOKEN
-from database import create_tables
-from admin import admin_panel
+from config import (
+    BOT_TOKEN,
+    ADMIN_ID,
+    QR_IMAGE,
+    UPI_ID,
+    CHANNEL_URL,
+)
 
-async def start(update, context):
-    await update.message.reply_text(
-        "👋 Welcome to Nandu Global Key Store!\n\n"
-        "Bot is starting successfully."
+from database import (
+    create_tables,
+    add_user,
+    add_order,
+)
+
+from products import (
+    PRODUCTS,
+    DURATIONS,
+)
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
+
+user_orders = {}
+
+create_tables()
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user = update.effective_user
+
+    add_user(
+        user.id,
+        user.username,
+        user.first_name
     )
 
-def main():
-    create_tables()
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "🛒 Products",
+                callback_data="products"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Join Channel",
+                url=CHANNEL_URL
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "👨‍💼 Contact Admin",
+                url="https://t.me/premiumsupport_boi"
+            )
+        ]
+    ]
 
-    app = Application.builder().token(BOT_TOKEN).build()
+    await update.message.reply_text(
+        "🔥 Welcome to Nandu Global Key Store 🔥\n\n"
+        "Please choose an option below.",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("admin", admin_panel))
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    print("Bot Started...")
-    app.run_polling()
+    user = update.effective_user
 
-if __name__ == "__main__":
-    main()
+    add_user(
+        user.id,
+        user.username,
+        user.first_name
+    )
+
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "🛒 Products",
+                callback_data="products"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Join Channel",
+                url=CHANNEL_URL
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "👨‍💼 Contact Admin",
+                url="https://t.me/premiumsupport_boi"
+            )
+        ]
+    ]
+
+    await update.message.reply_text(
+        "🔥 Welcome to Nandu Global Key Store 🔥\n\n"
+        "Please choose an option below.",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+if data == "back_home":
+    await start(update, context)
