@@ -244,3 +244,11 @@ async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Please check and approve/reject."
         )
     )
+
+application = Application.builder().token(BOT_TOKEN).build()
+
+application.add_handler(CommandHandler("start", start))
+application.add_handler(CallbackQueryHandler(button))
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, receive_utr))
+
+application.run_polling()
