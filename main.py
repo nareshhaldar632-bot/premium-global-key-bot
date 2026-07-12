@@ -5,7 +5,6 @@ from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    InputFile,
 )
 
 from telegram.ext import (
@@ -38,31 +37,60 @@ from products import (
 )
 
 logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
+create_tables()
 
-    add_user(
-        user.id,
-        user.username,
-        user.first_name
-    )
+user_orders = {}
 
-    keyboard = [
-        [InlineKeyboardButton("🛒 Products", callback_data="products")],
-        [InlineKeyboardButton("📢 Join Channel", url=CHANNEL_URL)],
-        [InlineKeyboardButton("👨‍💼 Contact Admin", url="https://t.me/premiumsupport_boi")]
-    ]
+import uuid
+import logging
 
-    await update.message.reply_text(
-        "🔥 Welcome to Nandu Global Key Store 🔥\n\n"
-        "Please choose an option below.",
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackQueryHandler,
+    MessageHandler,
+    ContextTypes,
+    filters,
+)
+
+from config import (
+    BOT_TOKEN,
+    ADMIN_ID,
+    CHANNEL_URL,
+    UPI_ID,
+    QR_IMAGE,
+)
+
+from database import (
+    create_tables,
+    add_user,
+    add_order,
+    update_order_status,
+)
+
+from products import (
+    PRODUCTS,
+    DURATIONS,
+)
+
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO,
+)
+
+create_tables()
+
+user_orders = {}
 
 async def products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -79,23 +107,22 @@ async def products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ])
 
     keyboard.append([
-    InlineKeyboardButton("⬅ Back", callback_data="home")
-])
-    
+        InlineKeyboardButton("⬅ Back", callback_data="home")
+    ])
 
-        await query.edit_message_text(
+    await query.edit_message_text(
         "🛒 Select Product",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
+
+
 async def product_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
     product_id = query.data.replace("product_", "")
 
-    user_orders[query.from_user.id] = {
-        "product": product_id
-    }
+    context.user_data["product"] = product_id
 
     keyboard = []
 
@@ -112,10 +139,9 @@ async def product_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ])
 
     await query.edit_message_text(
-        "📅 Select Duration",
+        "⏳ Select Duration",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
-
 
 async def duration_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -123,36 +149,36 @@ async def duration_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     duration = query.data.replace("duration_", "")
 
-    order = user_orders.get(query.from_user.id)
+    product = context.user_data.get("product")
 
-    if not order:
-        await query.message.reply_text("❌ Session expired. Please /start again.")
+    if not product:
+        await query.edit_message_text(
+            "❌ Session expired.\n\nPlease use /start again."
+        )
         return
 
-    order["duration"] = duration
-    order["price"] = DURATIONS[duration]
+    price = DURATIONS[duration]
+
+    order_id = str(uuid.uuid4())[:8].upper()
+
+    context.user_data["order_id"] = order_id
+    context.user_data["duration"] = duration
+    context.user_data["amount"] = price
 
     with open(QR_IMAGE, "rb") as photo:
+
         await query.message.reply_photo(
             photo=photo,
             caption=(
-                f"💳 Payment Amount: ₹{order['price']}\n\n"
+                f"🆔 Order ID : {order_id}\n\n"
+                f"📦 Product : {product}\n"
+                f"⏳ Duration : {duration}\n"
+                f"💰 Amount : ₹{price}\n\n"
                 f"UPI ID:\n{UPI_ID}\n\n"
-                "Payment complete karke apna UTR Number bhejo."
+                "✅ Payment karne ke baad apna UTR Number bhejo."
             )
         )
 
-    await query.message.reply_text("✍️ UTR Number send karo.")
-
-    
-
-    await query.edit_message_text(
-        "🛒 Select Product",
-        reply_markup=InlineKeyboardMarkup(keyboard)
+    await query.message.reply_text(
+        "✍️ Ab apna UTR Number send karo."
     )
-
-
-
-create_tables()
-
-user_orders = {}
