@@ -7,3 +7,4 @@ CHANNEL_USERNAME = "@Premium_Mods_Reseller"
 UPI_ID = "7425974582@ibl"
 
 QR_IMAGE = "qr.jpg"
+ADMIN_iD = "8469175911"
