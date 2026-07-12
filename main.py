@@ -81,12 +81,12 @@ async def products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard.append([
     InlineKeyboardButton("⬅ Back", callback_data="home")
 ])
+    
 
-await query.edit_message_text(
-    "🛒 Select Product",
-    reply_markup=InlineKeyboardMarkup(keyboard)
-)
-
+        await query.edit_message_text(
+        "🛒 Select Product",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 async def product_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
