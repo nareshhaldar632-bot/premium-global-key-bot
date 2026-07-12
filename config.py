@@ -1,5 +1,5 @@
 BOT_TOKEN = "8895041943:AAE6epTTqvijtcOjluluN5vzJDTbzmXefjY"
-ADMIN_BOT_TOKEN = "8202728398:AAH972oHMpBeZRv4Nb6z9kdyVc1Zt7z4OCU"
+ADMIN_BOT_TOKEN = "8202728398:AAH-wsXiNAg9o0yeMHRAxEV6xfQ4ETwg_9c"
 
 CHANNEL_URL = "https://t.me/primesupport_boi"
 CHANNEL_USERNAME = "@Premium_Mods_Reseller"
