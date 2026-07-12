@@ -119,4 +119,3 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 if data == "back_home":
-    await start(update, context)
