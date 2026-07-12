@@ -1,5 +1,8 @@
 import uuid
 import logging
+from database import add_order
+from config import ADMIN_BOT_TOKEN, ADMIN_ID
+from telegram import Bot
 
 from telegram import (
     Update,
@@ -177,3 +180,66 @@ async def duration_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "✍️ Please send your UTR Number."
     )
 
+# ================= UTR RECEIVE =================
+
+async def receive_utr(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    utr = update.message.text
+
+    product = context.user_data.get("product")
+    duration = context.user_data.get("duration")
+    amount = context.user_data.get("amount")
+    order_id = context.user_data.get("order_id")
+
+    if not order_id:
+        await update.message.reply_text(
+            "❌ Order nahi mila.\nPlease /start se dobara karein."
+        )
+        return
+
+
+    add_order(
+        order_id,
+        update.effective_user.id,
+        product,
+        duration,
+        amount,
+        utr
+    )
+
+        admin_bot = Bot(token=ADMIN_BOT_TOKEN)
+
+    await admin_bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            "🆕 New Order Received\n\n"
+            f"🆔 Order ID: {order_id}\n"
+            f"👤 User ID: {update.effective_user.id}\n"
+            f"📦 Product: {product}\n"
+            f"⏳ Duration: {duration}\n"
+            f"💰 Amount: ₹{amount}\n"
+            f"💳 UTR: {utr}\n\n"
+            "Please check and approve/reject."
+        )
+    )
+
+    await update.message.reply_text(
+        "✅ UTR Received\n\n"
+        "⏳ Aapka order admin verification mein hai."
+    )
+
+    admin_bot = Bot(token=ADMIN_BOT_TOKEN)
+
+    await admin_bot.send_message(
+        chat_id=ADMIN_ID,
+        text=(
+            "🆕 New Order Received\n\n"
+            f"🆔 Order ID: {order_id}\n"
+            f"👤 User ID: {update.effective_user.id}\n"
+            f"📦 Product: {product}\n"
+            f"⏳ Duration: {duration}\n"
+            f"💰 Amount: ₹{amount}\n"
+            f"💳 UTR: {utr}\n\n"
+            "Please check and approve/reject."
+        )
+    )
