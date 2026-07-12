@@ -18,7 +18,6 @@ from telegram.ext import (
 
 from config import (
     BOT_TOKEN,
-    ADMIN_ID,
     CHANNEL_URL,
     UPI_ID,
     QR_IMAGE,
@@ -27,14 +26,14 @@ from config import (
 from database import (
     create_tables,
     add_user,
-    add_order,
-    update_order_status,
 )
 
 from products import (
     PRODUCTS,
     DURATIONS,
 )
+
+# ----------------------------
 
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -43,54 +42,43 @@ logging.basicConfig(
 
 create_tables()
 
-user_orders = {}
+# ----------------------------
 
-import uuid
-import logging
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-)
+    user = update.effective_user
 
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    CallbackQueryHandler,
-    MessageHandler,
-    ContextTypes,
-    filters,
-)
+    add_user(
+        user.id,
+        user.username,
+        user.first_name,
+    )
 
-from config import (
-    BOT_TOKEN,
-    ADMIN_ID,
-    CHANNEL_URL,
-    UPI_ID,
-    QR_IMAGE,
-)
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                "🛒 Products",
+                callback_data="products"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📢 Join Channel",
+                url=CHANNEL_URL
+            )
+        ]
+    ]
 
-from database import (
-    create_tables,
-    add_user,
-    add_order,
-    update_order_status,
-)
+    await update.message.reply_text(
+        f"""👋 Welcome {user.first_name}
 
-from products import (
-    PRODUCTS,
-    DURATIONS,
-)
+🛍️ Welcome to Nandu Global Key Store
 
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.INFO,
-)
+Please choose an option below.""",
+        reply_markup=InlineKeyboardMarkup(keyboard),
+    )
 
-create_tables()
-
-user_orders = {}
+# ================= PRODUCTS MENU =================
 
 async def products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -101,8 +89,8 @@ async def products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for product in PRODUCTS:
         keyboard.append([
             InlineKeyboardButton(
-                product["name"],
-                callback_data=f"product_{product['id']}"
+                product,
+                callback_data=f"product|{product}"
             )
         ])
 
@@ -115,55 +103,61 @@ async def products_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-
 async def product_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     query = update.callback_query
     await query.answer()
 
-    product_id = query.data.replace("product_", "")
+    product = query.data.split("|")[1]
 
-    context.user_data["product"] = product_id
+    context.user_data["product"] = product
 
     keyboard = []
 
     for duration, price in DURATIONS.items():
+
         keyboard.append([
             InlineKeyboardButton(
                 f"{duration} - ₹{price}",
-                callback_data=f"duration_{duration}"
+                callback_data=f"duration|{duration}"
             )
         ])
 
     keyboard.append([
-        InlineKeyboardButton("⬅ Back", callback_data="products")
+        InlineKeyboardButton(
+            "⬅ Back",
+            callback_data="products"
+        )
     ])
 
     await query.edit_message_text(
+        f"📦 Product : {product}\n\n"
         "⏳ Select Duration",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
 async def duration_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     query = update.callback_query
     await query.answer()
 
-    duration = query.data.replace("duration_", "")
+    duration = query.data.split("|")[1]
 
     product = context.user_data.get("product")
 
-    if not product:
+    if product is None:
         await query.edit_message_text(
-            "❌ Session expired.\n\nPlease use /start again."
+            "❌ Session Expired\n\nPlease use /start again."
         )
         return
 
-    price = DURATIONS[duration]
+    amount = DURATIONS[duration]
 
     order_id = str(uuid.uuid4())[:8].upper()
 
     context.user_data["order_id"] = order_id
     context.user_data["duration"] = duration
-    context.user_data["amount"] = price
+    context.user_data["amount"] = amount
 
     with open(QR_IMAGE, "rb") as photo:
 
@@ -173,23 +167,13 @@ async def duration_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"🆔 Order ID : {order_id}\n\n"
                 f"📦 Product : {product}\n"
                 f"⏳ Duration : {duration}\n"
-                f"💰 Amount : ₹{price}\n\n"
-                f"UPI ID:\n{UPI_ID}\n\n"
-                "✅ Payment karne ke baad apna UTR Number bhejo."
+                f"💰 Amount : ₹{amount}\n\n"
+                f"💳 UPI ID : {UPI_ID}\n\n"
+                "✅ Payment karne ke baad apna UTR Number send karein."
             )
         )
 
     await query.message.reply_text(
-        "✍️ Ab apna UTR Number send karo."
+        "✍️ Please send your UTR Number."
     )
 
-app = Application.builder().token(BOT_TOKEN).build()
-
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CallbackQueryHandler(products_menu, pattern="^products$"))
-app.add_handler(CallbackQueryHandler(product_selected, pattern="^product_"))
-app.add_handler(CallbackQueryHandler(duration_selected, pattern="^duration_"))
-
-print("Bot Running...")
-
-app.run_polling()
